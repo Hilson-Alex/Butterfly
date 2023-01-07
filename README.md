@@ -1,6 +1,7 @@
 # Butterfly
 
-Butterfly is an experimental programming language with an enent-driven perspective to create concurrent programs by default
+Butterfly is an experimental programming language with an enent-driven perspective to create concurrent programs by default. 
+The Butterfly language is based on modules that communicate exclusively through events and asynchronous message passing.
 
 ## License
 
