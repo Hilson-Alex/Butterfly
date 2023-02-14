@@ -2,6 +2,7 @@ package bfio
 
 import (
 	"errors"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -27,6 +28,10 @@ func ReadCompileDir() (entries []os.DirEntry, root string, err error) {
 		return
 	}
 	return
+}
+
+func QuietClose(file fs.File) {
+	_ = file.Close()
 }
 
 func resourceFolder() (string, error) {

@@ -1,16 +1,16 @@
-//go:generate goyacc -o ./compiler/test.go ../yacc/test.y
+//go:generate goyacc -o ./compiler/parser/butterfly.go ../yacc/butterfly.y
 
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 
 	"github.com/Hilson-Alex/Butterfly/src/bfio"
+	"github.com/Hilson-Alex/Butterfly/src/compiler/lexer"
+	"github.com/Hilson-Alex/Butterfly/src/compiler/parser"
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 )
 
@@ -25,26 +25,23 @@ func main() {
 		generalLogger.Panic(err)
 	}
 	for _, entry := range entries {
-		fmt.Println(filepath.Join(compileDir, entry.Name()))
-		func() {
-			file, _ := os.Open(filepath.Join(compileDir, entry.Name()))
-			var scanner = bufio.NewScanner(file)
-			scanner.Scan()
-			fmt.Println(scanner.Text())
-			defer quietClose(file)
-		}()
+		func(name string) {
+			file, _ := os.Open(filepath.Join(compileDir, name))
+			defer bfio.QuietClose(file)
+			var tokens = lexer.MatchAllTokens(file)
+			fmt.Println(name)
+			var inter = parser.Parser[*lexer.Token]{TokBuffer: tokens}
+			var token = new(*lexer.Token)
+			for code := inter.Lex(token); code != 0; code = inter.Lex(token) {
+				fmt.Println(*token)
+			}
+			fmt.Println()
+		}(entry.Name())
 	}
 	// fmt.Println(dir[0].Name())
 	// var reader, err = os.Open(compileDir)
-	// defer func(reader *os.File) {
-	// 	_ = reader.Close()
-	// }(reader)
 	// if err != nil {
 	// 	fmt.Println(err)
 	// 	return
 	// }
-}
-
-func quietClose(file fs.File) {
-	_ = file.Close()
 }

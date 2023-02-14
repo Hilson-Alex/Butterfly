@@ -5,24 +5,35 @@ import (
 	"os"
 )
 
+// Used to change the console color for error printing.
 const (
 	errorColor = "\033[31m"
 	colorReset = "\033[0m"
 )
 
+// BfErrLogger just encapsulates the default Go logger
+// to print error messages as the adopted pattern for
+// Butterfly language.
 type BfErrLogger struct {
 	log       *log.Logger
 	errPrefix string
 }
 
+// Panic print the args and close the program.
+// Used for fatal errors that must interrupt the
+// compiler.
 func (bfLog *BfErrLogger) Panic(args ...any) {
 	bfLog.log.Fatalln(bfLog.mountArgs(args)...)
 }
 
+// Log print the args and continue the program.
+// Used for errors that doesn't affect the compilation
+// or to accumulate errors before crash.
 func (bfLog *BfErrLogger) Log(args ...any) {
 	bfLog.log.Println(bfLog.mountArgs(args)...)
 }
 
+// NewBfErrLogger builds and return a new BfErrLogger pointer.
 func NewBfErrLogger(errPrefix string) *BfErrLogger {
 	var logger = log.New(os.Stderr, errorColor, log.LstdFlags)
 	return &BfErrLogger{
@@ -31,6 +42,9 @@ func NewBfErrLogger(errPrefix string) *BfErrLogger {
 	}
 }
 
+// mountArgs build th arguments to the logger adding the message prefix
+// defined on the constructor and resetting the console color after
+// print the message (otherwise the console would stay red).
 func (bfLog *BfErrLogger) mountArgs(args []any) []any {
 	var newArgs = []any{bfLog.errPrefix}
 	newArgs = append(newArgs, args...)
