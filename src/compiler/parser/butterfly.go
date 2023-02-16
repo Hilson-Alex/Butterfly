@@ -20,16 +20,34 @@ const TEXT = 57349
 const BOOLEAN = 57350
 const TYPE = 57351
 const DECLARATION = 57352
-const DElIMITER = 57353
-const INCREMENT = 57354
-const NOT = 57355
-const LOGIC = 57356
-const ARITHMETIC = 57357
-const COMPARATOR = 57358
-const ASSIGN = 57359
-const COMMA = 57360
-const COLON = 57361
-const IDENTIFIER = 57362
+const DO = 57353
+const WHILE = 57354
+const FOR = 57355
+const IF = 57356
+const ELSE = 57357
+const SWITCH = 57358
+const CASE = 57359
+const ON = 57360
+const SHARE = 57361
+const FINISH = 57362
+const MODULE = 57363
+const MESSAGE = 57364
+const DElIMITER = 57365
+const INCREMENT = 57366
+const NOT = 57367
+const LOGIC = 57368
+const ARITHMETIC = 57369
+const COMPARATOR = 57370
+const ASSIGN = 57371
+const COMMA = 57372
+const COLON = 57373
+const OP_CURLY = 57374
+const CL_CURLY = 57375
+const OP_PARENT = 57376
+const CL_PARENT = 57377
+const OP_SQUARE = 57378
+const CL_SQUARE = 57379
+const IDENTIFIER = 57380
 
 var yyToknames = [...]string{
 	"$end",
@@ -42,6 +60,18 @@ var yyToknames = [...]string{
 	"BOOLEAN",
 	"TYPE",
 	"DECLARATION",
+	"DO",
+	"WHILE",
+	"FOR",
+	"IF",
+	"ELSE",
+	"SWITCH",
+	"CASE",
+	"ON",
+	"SHARE",
+	"FINISH",
+	"MODULE",
+	"MESSAGE",
 	"DElIMITER",
 	"INCREMENT",
 	"NOT",
@@ -51,6 +81,12 @@ var yyToknames = [...]string{
 	"ASSIGN",
 	"COMMA",
 	"COLON",
+	"OP_CURLY",
+	"CL_CURLY",
+	"OP_PARENT",
+	"CL_PARENT",
+	"OP_SQUARE",
+	"CL_SQUARE",
 	"IDENTIFIER",
 	"'+'",
 }
@@ -77,7 +113,7 @@ var yyAct = [...]int8{
 }
 
 var yyPact = [...]int16{
-	-21, -1000, -1000,
+	-39, -1000, -1000,
 }
 
 var yyPgo = [...]int8{
@@ -93,7 +129,7 @@ var yyR2 = [...]int8{
 }
 
 var yyChk = [...]int16{
-	-1000, -1, 21,
+	-1000, -1, 39,
 }
 
 var yyDef = [...]int8{
@@ -105,12 +141,14 @@ var yyTok1 = [...]int8{
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 21,
+	3, 3, 3, 39,
 }
 
 var yyTok2 = [...]int8{
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-	12, 13, 14, 15, 16, 17, 18, 19, 20,
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+	22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	32, 33, 34, 35, 36, 37, 38,
 }
 
 var yyTok3 = [...]int8{

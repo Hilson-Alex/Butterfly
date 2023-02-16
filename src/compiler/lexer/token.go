@@ -6,12 +6,16 @@ import (
 	"github.com/Hilson-Alex/Butterfly/src/compiler/parser"
 )
 
+// Token is an immutable struct that contains info
+// about each parsed token from the source code.
 type Token struct {
 	tokenType int
 	value     string
 	line      int
 	column    int
 }
+
+// Getters
 
 func (token *Token) TokenType() int {
 	return token.tokenType

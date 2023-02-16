@@ -2,21 +2,32 @@ package lexer
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 )
 
+// Logger for errors when parsing a token.
 var logger = bfErrors.NewBfErrLogger("LEXICAL ERROR")
 
-func MatchAllTokens(file fs.File) []*Token {
-	return newLexer(file).parse()
+// MatchAllTokens parse all tokens of a file and return as
+// a slice. Returns a slice with all successful tokens.
+// error is nil if no unknown token was found (no lexical errors).
+// If any unknown token was found, it returns all matched tokens and
+// an error.
+func MatchAllTokens(file fs.File) ([]*Token, error) {
+	var lexer, err = newLexer(file)
+	if err != nil {
+		return nil, err
+	}
+	return lexer.parse()
 }
 
+// lexer ia a private struct that contains the parsing state
 type lexer struct {
 	reader       *bufio.Reader
 	fileName     string
@@ -24,49 +35,61 @@ type lexer struct {
 	currentLine  string
 }
 
-func newLexer(file fs.File) *lexer {
-	stats, _ := file.Stat()
+// creates a new lexer from a file returns an error if
+// it could not read the file stats
+func newLexer(file fs.File) (*lexer, error) {
+	stats, err := file.Stat()
+	if err != nil {
+		return nil, err
+	}
 	return &lexer{
 		reader:   bufio.NewReader(file),
 		fileName: filepath.Join(os.Args[1], stats.Name()),
 		line:     1,
 		column:   1,
-	}
+	}, nil
 }
 
-func (lexer *lexer) parse() []*Token {
+// parse gets all valid tokens from the lexer reader.
+// if an unknown token is found, it logs the occurrence
+// and continue the parsing.
+func (lexer *lexer) parse() ([]*Token, error) {
 	var reader = lexer.reader
 	var tokens = make([]*Token, 0)
+	var hasError = false
 	var err error
 	for lexer.currentLine, err = reader.ReadString('\n'); ; lexer.currentLine, err = reader.ReadString('\n') {
+		if err != nil && err != io.EOF {
+			logger.Panic(err)
+		}
 		for lexer.currentLine != "" {
+			if lexer.skippedText() {
+				continue
+			}
 			if token := lexer.parseNextToken(); token != nil {
 				tokens = append(tokens, token)
+				continue
 			}
+			hasError = true
+			lexer.logError()
 		}
 		lexer.column = 1
 		if err == io.EOF {
 			break
 		}
 	}
-	return tokens
+	err = nil
+	if hasError {
+		err = errors.New("found unknown tokens for file " + lexer.fileName)
+	}
+	return tokens, err
 }
 
+// parseNextToken parses the next token of the lexer current line
 func (lexer *lexer) parseNextToken() *Token {
 	var text, line, column = lexer.currentLine, lexer.line, lexer.column
-	if text[0] == '\n' || text == "\r\n" || lineComment.MatchString(text) {
-		lexer.currentLine = ""
-		lexer.line++
-		return nil
-	}
-	if text[0] == ' ' || text[0] == '\t' {
-		lexer.currentLine = text[1:]
-		lexer.column++
-		return nil
-	}
 	for _, token := range matchers {
 		if str := token.matcher.FindString(text); str != "" {
-			str = strings.TrimSpace(str)
 			lexer.currentLine = text[len(str):]
 			lexer.column += len(str)
 			return &Token{
@@ -77,6 +100,30 @@ func (lexer *lexer) parseNextToken() *Token {
 			}
 		}
 	}
+	return nil
+}
+
+// skippedText skips and return a flag if the following characters
+// can be ignored
+func (lexer *lexer) skippedText() bool {
+	var text = lexer.currentLine
+	if text == "\n" || text == "\r\n" || lineComment.MatchString(text) {
+		lexer.currentLine = ""
+		lexer.line++
+		return true
+	}
+	if text[0] == ' ' || text[0] == '\t' {
+		lexer.currentLine = text[1:]
+		lexer.column++
+		return true
+	}
+	return false
+}
+
+// logError takes the next unknown token and logs a lexical
+// error.
+func (lexer *lexer) logError() {
+	var text, line, column = lexer.currentLine, lexer.line, lexer.column
 	var invalidToken = getUnknownToken(text)
 	var offset = len(invalidToken)
 	logger.Log(&bfErrors.TokenError{
@@ -91,5 +138,4 @@ func (lexer *lexer) parseNextToken() *Token {
 	} else {
 		lexer.currentLine = text[offset:]
 	}
-	return nil
 }

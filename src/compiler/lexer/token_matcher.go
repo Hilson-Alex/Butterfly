@@ -29,8 +29,23 @@ const (
 	text           = "\"(" + validChars + "|" + escaped + "|" + doubleBSlash + ")*\""
 
 	// Reserved keywords
-	boolean     = "(true|false)\\b"
-	typePattern = "(bool|byte|int|uint|float|string)\\b"
+	boolean       = "(true|false)\\b"
+	typePattern   = "(bool|byte|int|uint|float|string)\\b"
+	declaration   = "(let|const)\\b"
+	doLoop        = "do\\b"
+	whileLoop     = "while\\b"
+	forLoop       = "for\\b"
+	ifStatement   = "if\\b"
+	elseStatement = "else\\b"
+	selector      = "switch\\b"
+	caseStatement = "case\\b"
+
+	// Event keywords
+	on      = "on\\b"
+	share   = "share\\b"
+	finish  = "finish\\b"
+	module  = "module\\b"
+	message = "message\\b"
 
 	// Symbols
 	delimiter  = ";"
@@ -41,7 +56,15 @@ const (
 	comparator = "[=!><]=|>|<"
 	assign     = arithmetic + "?="
 	comma      = ","
-	collon     = ":"
+	colon      = ":"
+
+	// Groupers
+	openCurly        = "\\{"
+	closeCurly       = "\\}"
+	openParenthesis  = "\\("
+	closeParenthesis = "\\)"
+	openBrackets     = "\\["
+	closeBrackets    = "\\]"
 
 	// Identifier
 	identifier = "[a-zA-Z_][a-zA-Z0-9_]*"
@@ -56,8 +79,8 @@ type tokMatcher struct {
 
 // special patterns
 var (
-	lineComment  = tokPattern("//[^\\n]*\\n")
-	unknownToken = tokPattern("(.+?)(;| |[\\-+*/%]|[=!><]|,|:|&&|[|]{2}|\\r?\\n|\\z)")
+	lineComment  = tokPattern("//[^\\n]*(\\n|$)")
+	unknownToken = tokPattern("(.+?)(;| |[\\-+*/%]|[=!><]|,|:|&&|[|]{2}|\\r?\\n|$)")
 )
 
 // getUnknownToken parse everything until the next symbol token
@@ -68,13 +91,21 @@ func getUnknownToken(match string) string {
 
 // array that stores all the token matchers
 var matchers = [...]tokMatcher{
-	{tokPattern(boolean), parser.BOOLEAN},
 	{tokPattern(text), parser.TEXT},
 	{tokPattern(floatNumber), parser.FLOAT_NUMBER}, // float must be parsed before other numerics
 	{tokPattern(unsignedNumber), parser.UNSIGNED_NUMBER},
 	{tokPattern(signedNumber), parser.SIGNED_NUMBER},
 
+	{tokPattern(boolean), parser.BOOLEAN},
 	{tokPattern(typePattern), parser.TYPE},
+	{tokPattern(declaration), parser.DECLARATION},
+	{tokPattern(doLoop), parser.DO},
+	{tokPattern(whileLoop), parser.WHILE},
+	{tokPattern(forLoop), parser.FOR},
+	{tokPattern(ifStatement), parser.IF},
+	{tokPattern(elseStatement), parser.ELSE},
+	{tokPattern(selector), parser.SWITCH},
+	{tokPattern(caseStatement), parser.CASE},
 
 	{tokPattern(delimiter), parser.DElIMITER},
 	{tokPattern(increment), parser.INCREMENT},
@@ -84,7 +115,20 @@ var matchers = [...]tokMatcher{
 	{tokPattern(comparator), parser.COMPARATOR},
 	{tokPattern(assign), parser.ASSIGN},
 	{tokPattern(comma), parser.COMMA},
-	{tokPattern(collon), parser.COLON},
+	{tokPattern(colon), parser.COLON},
+
+	{tokPattern(on), parser.ON},
+	{tokPattern(share), parser.SHARE},
+	{tokPattern(finish), parser.FINISH},
+	{tokPattern(module), parser.MODULE},
+	{tokPattern(message), parser.MESSAGE},
+
+	{tokPattern(openCurly), parser.OP_CURLY},
+	{tokPattern(closeCurly), parser.CL_CURLY},
+	{tokPattern(openParenthesis), parser.OP_PARENT},
+	{tokPattern(closeParenthesis), parser.CL_PARENT},
+	{tokPattern(openBrackets), parser.OP_SQUARE},
+	{tokPattern(closeBrackets), parser.CL_SQUARE},
 
 	{tokPattern(identifier), parser.IDENTIFIER},
 }

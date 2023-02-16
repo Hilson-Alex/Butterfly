@@ -24,11 +24,15 @@ func main() {
 	if err != nil {
 		generalLogger.Panic(err)
 	}
+	var failedLexers = make([]error, 0)
 	for _, entry := range entries {
 		func(name string) {
 			file, _ := os.Open(filepath.Join(compileDir, name))
 			defer bfio.QuietClose(file)
-			var tokens = lexer.MatchAllTokens(file)
+			var tokens, err = lexer.MatchAllTokens(file)
+			if err != nil {
+				failedLexers = append(failedLexers, err)
+			}
 			fmt.Println(name)
 			var inter = parser.Parser[*lexer.Token]{TokBuffer: tokens}
 			var token = new(*lexer.Token)
@@ -37,6 +41,9 @@ func main() {
 			}
 			fmt.Println()
 		}(entry.Name())
+	}
+	if len(failedLexers) > 0 {
+		generalLogger.Panic(bfErrors.CreateNestedErr("lexical analysis failed", failedLexers...))
 	}
 	// fmt.Println(dir[0].Name())
 	// var reader, err = os.Open(compileDir)
