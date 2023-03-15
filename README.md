@@ -30,6 +30,8 @@ variable on windows and then use it like this:
 butterfly <folder_with_bf_files>
 ```
 
+> You can see a tutorial about configuring the environment variables [here.](https://www.c-sharpcorner.com/article/how-to-addedit-path-environment-variable-in-windows-11/)
+
 Or, alternatively, you can just specify the path to the executable as follows:
 
 ```shell
