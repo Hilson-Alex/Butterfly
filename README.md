@@ -16,7 +16,7 @@ By following these instructions you will get the working compiler on your comput
 
 ### Installing
 
-For now, to get the compiler you just need to download the executable [here](out/butterfly.exe)
+For now, to get the compiler you just need to download the executable [here](https://github.com/Hilson-Alex/Butterfly/releases/tag/0.1.0)
 This probably will change on later versions with the need to get resources
 
 ### Using The Compiler
