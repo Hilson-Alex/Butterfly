@@ -4,7 +4,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -14,9 +13,9 @@ import (
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 )
 
-func main() {
-	var generalLogger = bfErrors.NewBfErrLogger("ERROR:")
+var generalLogger = bfErrors.NewBfErrLogger("ERROR:")
 
+func main() {
 	if len(os.Args) < 2 {
 		generalLogger.Panic(errors.New("missing the compiling directory"))
 	}
@@ -24,31 +23,38 @@ func main() {
 	if err != nil {
 		generalLogger.Panic(err)
 	}
-	var failedLexers = make([]error, 0)
-	for _, entry := range entries {
-		func(name string) {
-			file, _ := os.Open(filepath.Join(compileDir, name))
-			defer bfio.QuietClose(file)
-			var tokens, err = lexer.MatchAllTokens(file)
-			if err != nil {
-				failedLexers = append(failedLexers, err)
-			}
-			fmt.Println(name)
-			var inter = parser.Parser[*lexer.Token]{TokBuffer: tokens}
-			var token = new(*lexer.Token)
-			for code := inter.Lex(token); code != 0; code = inter.Lex(token) {
-				fmt.Println(*token)
-			}
-			fmt.Println()
-		}(entry.Name())
-	}
-	if len(failedLexers) > 0 {
-		generalLogger.Panic(bfErrors.CreateNestedErr("lexical analysis failed", failedLexers...))
-	}
+
+	compileAll(entries, compileDir)
+
 	// fmt.Println(dir[0].Name())
 	// var reader, err = os.Open(compileDir)
 	// if err != nil {
 	// 	fmt.Println(err)
 	// 	return
 	// }
+}
+
+func compileAll(entries []os.DirEntry, dir string) {
+	var lexerResults = lexAll(entries, dir)
+	for _, tokens := range lexerResults {
+		parser.Parse(tokens)
+	}
+}
+
+func lexAll(entries []os.DirEntry, dir string) [][]*lexer.Token {
+	var failedLexers = make([]error, 0)
+	var parsedTokens = make([][]*lexer.Token, 0)
+	for _, entry := range entries {
+		bfio.HandleFile(filepath.Join(dir, entry.Name()), func(file *os.File) {
+			var tokens, err = lexer.MatchAllTokens(file)
+			if err != nil {
+				failedLexers = append(failedLexers, err)
+			}
+			parsedTokens = append(parsedTokens, tokens)
+		})
+	}
+	if len(failedLexers) > 0 {
+		generalLogger.Panic(bfErrors.CreateNestedErr("lexical analysis failed", failedLexers...))
+	}
+	return parsedTokens
 }
