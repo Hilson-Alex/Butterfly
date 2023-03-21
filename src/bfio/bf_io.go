@@ -11,6 +11,8 @@ import (
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 )
 
+type callback = func(file *os.File)
+
 func ReadCompileDir() (entries []os.DirEntry, root string, err error) {
 	if len(os.Args) < 2 {
 		err = errors.New("missing the compiling directory")
@@ -27,6 +29,7 @@ func ReadCompileDir() (entries []os.DirEntry, root string, err error) {
 		err = bfErrors.CreateNestedErr("can't open directory", err)
 		return
 	}
+	entries = filterEntries(entries)
 	return
 }
 
@@ -34,7 +37,23 @@ func QuietClose(file fs.File) {
 	_ = file.Close()
 }
 
-func resourceFolder() (string, error) {
+func HandleFile(name string, handler callback) {
+	file, _ := os.Open(name)
+	defer QuietClose(file)
+	handler(file)
+}
+
+func filterEntries(entries []os.DirEntry) []os.DirEntry {
+	var filteredEntries = make([]os.DirEntry, 0)
+	for _, entry := range entries {
+		if filepath.Ext(entry.Name()) == ".bf" {
+			filteredEntries = append(filteredEntries, entry)
+		}
+	}
+	return filteredEntries
+}
+
+func ResourceFolder() (string, error) {
 	var exePath, err = os.Executable()
 	if err != nil {
 		return "", err
