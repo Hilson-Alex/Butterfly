@@ -12,7 +12,7 @@ import (
 )
 
 // Logger for errors when parsing a token.
-var logger = bfErrors.NewBfErrLogger("LEXICAL ERROR")
+var logger = bfErrors.NewBfErrLogger("LEXICAL ERROR:")
 
 // MatchAllTokens parse all tokens of a file and return as
 // a slice. Returns a slice with all successful tokens.
@@ -97,6 +97,7 @@ func (lexer *lexer) parseNextToken() *Token {
 				value:     str,
 				line:      line,
 				column:    column,
+				fileName:  lexer.fileName,
 			}
 		}
 	}

@@ -13,6 +13,7 @@ type Token struct {
 	value     string
 	line      int
 	column    int
+	fileName  string
 }
 
 // Getters
@@ -31,6 +32,10 @@ func (token *Token) Line() int {
 
 func (token *Token) Column() int {
 	return token.column
+}
+
+func (token *Token) FileName() string {
+	return token.fileName
 }
 
 func (token *Token) String() string {

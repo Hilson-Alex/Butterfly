@@ -24,21 +24,22 @@ const (
 const (
 	// Values
 	unsignedNumber = "[0-9]+"
-	signedNumber   = "(-|[+])" + unsignedNumber
+	signedNumber   = "-" + unsignedNumber
 	floatNumber    = "(" + signedNumber + "|" + unsignedNumber + ")[.]" + unsignedNumber
 	text           = "\"(" + validChars + "|" + escaped + "|" + doubleBSlash + ")*\""
 
 	// Reserved keywords
-	boolean       = "(true|false)\\b"
-	typePattern   = "(bool|byte|int|uint|float|string)\\b"
-	declaration   = "(let|const)\\b"
-	doLoop        = "do\\b"
-	whileLoop     = "while\\b"
-	forLoop       = "for\\b"
-	ifStatement   = "if\\b"
-	elseStatement = "else\\b"
-	selector      = "switch\\b"
-	caseStatement = "case\\b"
+	boolean          = "(true|false)\\b"
+	typePattern      = "(bool|byte|int|uint|float|string)\\b"
+	constDeclaration = "const\\b"
+	letDeclaration   = "let\\b"
+	doLoop           = "do\\b"
+	whileLoop        = "while\\b"
+	forLoop          = "for\\b"
+	ifStatement      = "if\\b"
+	elseStatement    = "else\\b"
+	selector         = "switch\\b"
+	caseStatement    = "case\\b"
 
 	// Event keywords
 	on      = "on\\b"
@@ -98,7 +99,8 @@ var matchers = [...]tokMatcher{
 
 	{tokPattern(boolean), parser.BOOLEAN},
 	{tokPattern(typePattern), parser.TYPE},
-	{tokPattern(declaration), parser.DECLARATION},
+	{tokPattern(constDeclaration), parser.CONST},
+	{tokPattern(letDeclaration), parser.LET},
 	{tokPattern(doLoop), parser.DO},
 	{tokPattern(whileLoop), parser.WHILE},
 	{tokPattern(forLoop), parser.FOR},
@@ -107,7 +109,7 @@ var matchers = [...]tokMatcher{
 	{tokPattern(selector), parser.SWITCH},
 	{tokPattern(caseStatement), parser.CASE},
 
-	{tokPattern(delimiter), parser.DElIMITER},
+	{tokPattern(delimiter), parser.DELIMITER},
 	{tokPattern(increment), parser.INCREMENT},
 	{tokPattern(not), parser.NOT},
 	{tokPattern(logic), parser.LOGIC},
