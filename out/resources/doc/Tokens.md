@@ -2,6 +2,7 @@
 
 List of the Language Tokens to easy the understanding of the language, and it's syntax.
 
+
 ### Value Tokens
 
 These are tokens that represents a value or an alias to any value.
@@ -26,39 +27,43 @@ These tokens are words that have a special meaning on the language.
 
 - **BOOLEAN:** `true` or `false`. They are also a boolean value, and so, they can be associated to an identifier.
 
-- **TYPE:** `bool`, `byte`, `int`, `uint`, `float` or `string`.
+- **TYPE:** `bool`, `byte`, `int`, `uint`, `float` or `string`. Used to type variables or constants.
 
-- **CONST:** `const`.
+- **CONST:** `const` keyword for constants declaration.
 
-- **LET:** `let`.
+- **LET:** `let` keyword for variables declaration.
 
-- **DO:** `do`.
+- **DO:** `do`. Used in do-while loops.
 
-- **WHILE:** `while`.
+- **WHILE:** `while`. Can be used in both while or do-while loops.
 
-- **FOR:** `for`.
+- **FOR:** `for`. Used in for loops.
 
-- **IF:** `if`.
+- **IF:** `if`. For if statements.
 
-- **ELSE:** `else`.
+- **ELSE:** `else`. For else clauses. 
 
-- **SWITCH:** `switch`.
+- **SWITCH:** `switch`. Used in switch statements.
 
-- **CASE:** `case`.
+- **CASE:** `case`. the keyword for a case on the switch statement. Like in golang, the cases don't need a break;
+
+- **DEFAULT:** `default`. A special switch case that executes when none of the other cases match; 
+
 
 #### Event keywords
 
 These are keywords used to handle the language events.
 
-- **ON:** `on`.
+- **ON:** `on`. Keyword to declare a response for an event.
 
-- **SHARE:** `share`.
+- **SHARE:** `share`. Keyword to dispatch an event.
 
-- **FINISH:** `finish`.
+- **FINISH:** `finish`. Ends an event. Works like the return keyword on void methods in other languages.
 
-- **MODULE:** `module`.
+- **MODULE:** `module`. Defines a butterfly module.
 
-- **MESSAGE:** `message`.
+- **MESSAGE:** `message`. Declares a message for an event.
+
 
 ### Symbols
 

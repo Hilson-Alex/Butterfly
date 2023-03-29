@@ -19,18 +19,19 @@ By following these instructions you will get the working compiler on your comput
 For now, to get the compiler you just need to download the executable [here](https://github.com/Hilson-Alex/Butterfly/releases/tag/0.1.0)
 This probably will change on later versions with the need to get resources
 
+> You can see a tutorial about configuring the environment variables [here.](https://www.c-sharpcorner.com/article/how-to-addedit-path-environment-variable-in-windows-11/)
+
+
 ### Using The Compiler
 
 The Butterfly compiler receive a directory with one or more *.bf* files inside.
 
-To use the compiler you can either add the path to the `Path` environment
-variable on windows and then use it like this: 
+If you used the installer or added the [/out](./out) folder to the `Path` environment
+variable, then you can just use it like this: 
 
 ```shell
 butterfly <folder_with_bf_files>
 ```
-
-> You can see a tutorial about configuring the environment variables [here.](https://www.c-sharpcorner.com/article/how-to-addedit-path-environment-variable-in-windows-11/)
 
 Or, alternatively, you can just specify the path to the executable as follows:
 

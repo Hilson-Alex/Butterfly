@@ -5,9 +5,9 @@ import (
 	"errors"
 	"io"
 	"io/fs"
-	"os"
 	"path/filepath"
 
+	"github.com/Hilson-Alex/Butterfly/src/bfio"
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 )
 
@@ -44,7 +44,7 @@ func newLexer(file fs.File) (*lexer, error) {
 	}
 	return &lexer{
 		reader:   bufio.NewReader(file),
-		fileName: filepath.Join(os.Args[1], stats.Name()),
+		fileName: filepath.Join(bfio.CompileDir, stats.Name()),
 		line:     1,
 		column:   1,
 	}, nil

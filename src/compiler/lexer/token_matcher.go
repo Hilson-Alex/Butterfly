@@ -40,6 +40,7 @@ const (
 	elseStatement    = "else\\b"
 	selector         = "switch\\b"
 	caseStatement    = "case\\b"
+	defaultStatement = "default\\b"
 
 	// Event keywords
 	on      = "on\\b"
@@ -58,6 +59,7 @@ const (
 	assign     = arithmetic + "?="
 	comma      = ","
 	colon      = ":"
+	dot        = "\\.\\b"
 
 	// Groupers
 	openCurly        = "\\{"
@@ -108,16 +110,18 @@ var matchers = [...]tokMatcher{
 	{tokPattern(elseStatement), parser.ELSE},
 	{tokPattern(selector), parser.SWITCH},
 	{tokPattern(caseStatement), parser.CASE},
+	{tokPattern(defaultStatement), parser.DEFAULT},
 
 	{tokPattern(delimiter), parser.DELIMITER},
 	{tokPattern(increment), parser.INCREMENT},
+	{tokPattern(assign), parser.ASSIGN}, // assign must be parsed before arithmetic
 	{tokPattern(not), parser.NOT},
 	{tokPattern(logic), parser.LOGIC},
 	{tokPattern(arithmetic), parser.ARITHMETIC},
 	{tokPattern(comparator), parser.COMPARATOR},
-	{tokPattern(assign), parser.ASSIGN},
 	{tokPattern(comma), parser.COMMA},
 	{tokPattern(colon), parser.COLON},
+	{tokPattern(dot), parser.DOT},
 
 	{tokPattern(on), parser.ON},
 	{tokPattern(share), parser.SHARE},

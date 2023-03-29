@@ -28,6 +28,7 @@ type token interface {
 type Parser[T token] struct {
 	TokBuffer []T
 	lastToken T
+	hadError  bool
 }
 
 func (lex *Parser[T]) Lex(lval *yySymType) int {
@@ -41,6 +42,7 @@ func (lex *Parser[T]) Lex(lval *yySymType) int {
 }
 
 func (lex *Parser[T]) Error(error string) {
+	lex.hadError = true
 	var lastToken = lex.lastToken
 	var expectedTokens = ""
 	if strings.Contains(error, "expecting") {
@@ -54,8 +56,10 @@ func (lex *Parser[T]) Error(error string) {
 	logger.Log(errorMessage)
 }
 
-func Parse[T token](lexer []T) {
-	yyParse(&Parser[T]{TokBuffer: lexer})
+func Parse[T token](lexer []T) bool {
+	var parserInfo = &Parser[T]{TokBuffer: lexer, hadError: false}
+	yyParse(parserInfo)
+	return !parserInfo.hadError
 }
 
 func TokenName(code int) string {

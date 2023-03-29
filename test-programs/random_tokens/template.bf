@@ -8,7 +8,7 @@ true false
 bool char truta int byte uint float string
 kdjddjbds
 
-boola ??  == = >=
+boola   == = >=
 
 module ModuleA {
     let var1;
