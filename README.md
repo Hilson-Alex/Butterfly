@@ -16,11 +16,14 @@ By following these instructions you will get the working compiler on your comput
 
 ### Installing
 
-For now, to get the compiler you just need to download the executable [here](https://github.com/Hilson-Alex/Butterfly/releases/tag/0.1.0)
-This probably will change on later versions with the need to get resources
+The easiest way to install the compiler, you just need to download the bf_installer.msi [here](https://github.com/Hilson-Alex/Butterfly/releases/tag/0.2.0). 
+When executed, the installer will install the executable, dependencies and do all setup needed.
+
+Another way to get the compiler working is downloading the source code and adding the path to the [/out] folder(./out) on the `Path`
+environment variable. It is important to not change the locations of the executable or the resource folder (and anything inside it),
+or the compiler may malfunction.
 
 > You can see a tutorial about configuring the environment variables [here.](https://www.c-sharpcorner.com/article/how-to-addedit-path-environment-variable-in-windows-11/)
-
 
 ### Using The Compiler
 
@@ -30,14 +33,22 @@ If you used the installer or added the [/out](./out) folder to the `Path` enviro
 variable, then you can just use it like this: 
 
 ```shell
-butterfly <folder_with_bf_files>
+butterfly <flags> <folder_with_bf_files>
 ```
 
 Or, alternatively, you can just specify the path to the executable as follows:
 
 ```shell
-path\to\butterfly.exe <folder_with_bf_files>
+path\to\butterfly.exe <flags> <folder_with_bf_files>
 ```
+
+All flags are optional. The valid flags are listed bellow.
+
+- -help: prints the usage and all valid flags
+- -lexerVerbose: Prints the parsed tokens while compiling. Used on debugging
+- -listTokens: list all valid tokens. You also can read them [here](./out/resources/doc/Tokens.md).
+  This is useful to understand the parser errors.
+- -out: (DRAFT) especify the path where the executable will be generated. 
 
 ### Cloning and Building
 
@@ -62,7 +73,9 @@ go generate ./src
 go build -o ../out/butterfly.exe github.com/Hilson-Alex/Butterfly/src
 ```
 
-And then you will have a `butterfly.exe` on the `out` folder, beside the src. 
+And then you will have a `butterfly.exe` on the `out` folder, beside the src.
+
+You can setup the `Path` environment variable as instructed [above](#installing) if wanted
 
 ## Author
 
