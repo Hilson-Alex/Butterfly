@@ -44,11 +44,11 @@ path\to\butterfly.exe <flags> <folder_with_bf_files>
 
 All flags are optional. The valid flags are listed bellow.
 
-- -help: prints the usage and all valid flags
-- -lexerVerbose: Prints the parsed tokens while compiling. Used on debugging
-- -listTokens: list all valid tokens. You also can read them [here](./out/resources/doc/Tokens.md).
+- *-help*: prints the usage and all valid flags
+- *-lexerVerbose*: Prints the parsed tokens while compiling. Used on debugging
+- *-listTokens*: list all valid tokens. You also can read them [here](./out/resources/doc/Tokens.md).
   This is useful to understand the parser errors.
-- -out: (DRAFT) especify the path where the executable will be generated. 
+- *-out*: (DRAFT) especify the path where the executable will be generated. 
 
 ### Cloning and Building
 
