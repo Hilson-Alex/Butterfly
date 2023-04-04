@@ -19,10 +19,10 @@ func init() {
 	flag.BoolVar(&ListTokens, "listTokens", false, "List all language tokens and their use. Useful to understand syntax errors")
 	flag.BoolVar(&LexerVerbose, "lexerVerbose", false, "Prints the parsed Tokens while compiling")
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage: butterfly [flags] [compiling directory]\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "Flags for %s:\n", os.Args[0])
-		fmt.Fprintf(flag.CommandLine.Output(), "  -help\n")
-		fmt.Fprintf(flag.CommandLine.Output(), "    \tPrints this message\n")
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage: butterfly [flags] [compiling directory]\n")
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Flags for %s:\n", os.Args[0])
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "  -help\n")
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "    \tPrints this message\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
