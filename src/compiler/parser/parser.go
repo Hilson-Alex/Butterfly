@@ -1,22 +1,28 @@
 package parser
 
 import (
-	"fmt"
-	"strings"
-
+	"github.com/Hilson-Alex/Butterfly/src/compiler/checker"
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 )
 
-const (
-	EOF = iota
-)
+// EOF represents the syntactic value of the End Of File.
+const EOF = 0
 
+// Config to get more info on the goyacc generated butterfly.go file errors.
 func init() {
 	yyErrorVerbose = true
 }
 
+// Logger for errors when parsing the syntax.
 var logger = bfErrors.NewBfErrLogger("SYNTAX ERROR:")
 
+var PrintToken = func(code int) string {
+	return TokenName(code)
+}
+
+// token interface breaks the lexer dependency, so there's no circular
+// imports. The lexer needs to import the parser to get the Token Codes,
+// but the parser don't need to import the lexer to access its info.
 type token interface {
 	TokenType() int
 	Value() string
@@ -25,41 +31,51 @@ type token interface {
 	FileName() string
 }
 
+// Parser is a facade to communicate to the goyacc generated file
 type Parser[T token] struct {
-	TokBuffer []T
-	lastToken T
-	hadError  bool
+	TokBuffer    []T
+	lastToken    T
+	success      bool
+	currentScope *checker.BFScope
+	result       string
 }
 
+type ParserResult struct {
+	ModuleName, Result string
+	Success            bool
+}
+
+// Lex passes the next token to the goyacc generated parser
 func (lex *Parser[T]) Lex(lval *yySymType) int {
 	if len(lex.TokBuffer) == EOF {
 		return EOF
 	}
-	lex.lastToken = lex.TokBuffer[0]
-	lval.yys = lex.lastToken.TokenType()
+	var currentToken = lex.TokBuffer[0]
+	lex.lastToken = currentToken
+	lval.yys = currentToken.TokenType()
+	lval.content = currentToken.Value()
+	lval.currentToken = currentToken
+	lval.scope = lex.currentScope
+	lval.result = &lex.result
 	lex.TokBuffer = lex.TokBuffer[1:]
 	return lval.yys
 }
 
+// Error logs any syntactic error
 func (lex *Parser[T]) Error(error string) {
-	lex.hadError = true
+	lex.success = false
 	var lastToken = lex.lastToken
-	var expectedTokens = ""
-	if strings.Contains(error, "expecting") {
-		expectedTokens = "\n\t Expecting " + strings.Split(error, "expecting ")[1]
-	}
-	var errorMessage = fmt.Sprintf(
-		"unexpected token %s %q at line %d and column %d of %s.%s",
-		TokenName(lastToken.TokenType()), lastToken.Value(), lastToken.Line(),
-		lastToken.Column(), lastToken.FileName(), expectedTokens,
-	)
-	logger.Log(errorMessage)
+	logger.Log(bfErrors.CreateSyntaxError(error, PrintToken(lastToken.TokenType()), lastToken))
 }
 
-func Parse[T token](lexer []T) bool {
-	var parserInfo = &Parser[T]{TokBuffer: lexer, hadError: false}
+func Parse[T token](lexer []T) ParserResult {
+	var parserInfo = &Parser[T]{TokBuffer: lexer, success: true, currentScope: new(checker.BFScope)}
 	yyParse(parserInfo)
-	return !parserInfo.hadError
+	return ParserResult{
+		ModuleName: parserInfo.currentScope.Module().Name(),
+		Result:     parserInfo.result,
+		Success:    parserInfo.success,
+	}
 }
 
 func TokenName(code int) string {

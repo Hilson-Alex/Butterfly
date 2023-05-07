@@ -16,7 +16,15 @@ import (
 
 type callback func(file *os.File)
 
-const tokenFile = "doc/Tokens.md"
+const (
+	tokenFile          = "doc/Tokens.md"
+	goRoot             = "go_compiler"
+	goInternalCompiler = "go_compiler/bin/go.exe"
+	goFmtInternal      = "go_compiler/bin/gofmt.exe"
+	butterflyEmbbed    = "butterfly_embbed"
+	generatedFolder    = "butterfly_embbed/generated_code/"
+	generatedDocFile   = "bf_____generated.go"
+)
 
 func ReadCompileDir() (entries []os.DirEntry, err error) {
 	if CompileDir == "" {
@@ -71,9 +79,69 @@ func ResourceFolder() (string, error) {
 	return filepath.Join(exePath, "resources"), nil
 }
 
-func executeExternal(path string) error {
-	cmd := exec.Command(path)
+func GenerateGoFile(filename, content string) error {
+	var resourceFolder, err = ResourceFolder()
+	if err != nil {
+		return err
+	}
+	generated, err := os.Create(filepath.Join(resourceFolder, generatedFolder, filename+".go"))
+	defer QuietClose(generated)
+	if err != nil {
+		return err
+	}
+	_, err = generated.WriteString(content)
+	return err
+}
+
+func GoCompile() error {
+	var resourceFolder, err = ResourceFolder()
+	if err != nil {
+		return err
+	}
+	var goPath = filepath.Join(resourceFolder, goInternalCompiler)
+	var env = append(
+		os.Environ(),
+		"GOROOT="+filepath.Join(resourceFolder, goRoot),
+	)
+	return executeExternalEnv(
+		env,
+		goPath,
+		"build",
+		"-C="+filepath.Join(resourceFolder, butterflyEmbbed),
+		"-o="+outputPath(),
+		butterflyEmbbed,
+	)
+}
+
+func GoFmtGenerated() error {
+	var resourceFolder, err = ResourceFolder()
+	if err != nil {
+		return err
+	}
+	var generated = filepath.Join(resourceFolder, generatedFolder)
+	var goFmt = filepath.Join(resourceFolder, goFmtInternal)
+	return executeExternal(goFmt, "-s", "-w", generated)
+}
+
+func CleanGeneratedFiles() {
+	var resourceFolder, _ = ResourceFolder()
+	var entries, _ = os.ReadDir(filepath.Join(resourceFolder, generatedFolder))
+	for _, file := range entries {
+		if file.Name() != generatedDocFile {
+			_ = os.Remove(filepath.Join(resourceFolder, generatedFolder, file.Name()))
+		}
+	}
+}
+
+func executeExternal(path string, arg ...string) error {
+	return executeExternalEnv(os.Environ(), path, arg...)
+}
+
+func executeExternalEnv(env []string, path string, arg ...string) error {
+	cmd := exec.Command(path, arg...)
+	cmd.Env = env
 	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
 
@@ -85,4 +153,18 @@ func filterEntries(entries []os.DirEntry) []os.DirEntry {
 		}
 	}
 	return filteredEntries
+}
+
+func outputPath() string {
+	var absPath string
+	var exeName = filepath.Base(CompileDir) + ".exe"
+	if OutputPath == "" {
+		absPath, _ = filepath.Abs(CompileDir)
+		return filepath.Join(absPath, exeName)
+	}
+	absPath, _ = filepath.Abs(OutputPath)
+	if filepath.Ext(absPath) != ".exe" {
+		return filepath.Join(absPath, exeName)
+	}
+	return absPath
 }

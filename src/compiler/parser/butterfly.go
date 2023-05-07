@@ -8,9 +8,19 @@ import __yyfmt__ "fmt"
 
 //line ../yacc/butterfly.y:3
 
-//line ../yacc/butterfly.y:7
+import (
+	"github.com/Hilson-Alex/Butterfly/src/compiler/checker"
+)
+
+//line ../yacc/butterfly.y:11
 type yySymType struct {
-	yys int
+	yys          int
+	content      string
+	currentToken token
+	parsed       string
+	tokType      checker.BFType
+	scope        *checker.BFScope
+	result       *string
 }
 
 const FLOAT_NUMBER = 57346
@@ -19,39 +29,41 @@ const SIGNED_NUMBER = 57348
 const TEXT = 57349
 const BOOLEAN = 57350
 const TYPE = 57351
-const CONST = 57352
-const LET = 57353
-const DO = 57354
-const WHILE = 57355
-const FOR = 57356
-const IF = 57357
-const ELSE = 57358
-const SWITCH = 57359
-const CASE = 57360
-const DEFAULT = 57361
-const ON = 57362
-const SHARE = 57363
-const FINISH = 57364
-const MODULE = 57365
-const MESSAGE = 57366
-const DELIMITER = 57367
-const INCREMENT = 57368
-const NOT = 57369
-const LOGIC = 57370
-const ARITHMETIC = 57371
-const COMPARATOR = 57372
-const ASSIGN = 57373
-const COMMA = 57374
-const COLON = 57375
-const DOT = 57376
-const OP_CURLY = 57377
-const CL_CURLY = 57378
-const OP_PARENT = 57379
-const CL_PARENT = 57380
-const OP_SQUARE = 57381
-const CL_SQUARE = 57382
-const IDENTIFIER = 57383
-const NEGATED = 57384
+const ANY = 57352
+const CONST = 57353
+const LET = 57354
+const DO = 57355
+const WHILE = 57356
+const FOR = 57357
+const IF = 57358
+const ELSE = 57359
+const SWITCH = 57360
+const CASE = 57361
+const DEFAULT = 57362
+const ON = 57363
+const SHARE = 57364
+const FINISH = 57365
+const MODULE = 57366
+const MESSAGE = 57367
+const DELIMITER = 57368
+const INCREMENT = 57369
+const NOT = 57370
+const LOGIC = 57371
+const ARITHMETIC = 57372
+const COMPARATOR = 57373
+const ASSIGN = 57374
+const EXP_ASSIGN = 57375
+const COMMA = 57376
+const COLON = 57377
+const DOT = 57378
+const OP_CURLY = 57379
+const CL_CURLY = 57380
+const OP_PARENT = 57381
+const CL_PARENT = 57382
+const OP_SQUARE = 57383
+const CL_SQUARE = 57384
+const IDENTIFIER = 57385
+const NEGATED = 57386
 
 var yyToknames = [...]string{
 	"$end",
@@ -63,6 +75,7 @@ var yyToknames = [...]string{
 	"TEXT",
 	"BOOLEAN",
 	"TYPE",
+	"ANY",
 	"CONST",
 	"LET",
 	"DO",
@@ -85,6 +98,7 @@ var yyToknames = [...]string{
 	"ARITHMETIC",
 	"COMPARATOR",
 	"ASSIGN",
+	"EXP_ASSIGN",
 	"COMMA",
 	"COLON",
 	"DOT",
@@ -104,184 +118,217 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line ../yacc/butterfly.y:195
+//line ../yacc/butterfly.y:299
 
 //line yacctab:1
 var yyExca = [...]int16{
 	-1, 1,
 	1, -1,
 	-2, 0,
-	-1, 44,
-	6, 58,
-	29, 58,
-	30, 58,
-	-2, 40,
-	-1, 55,
-	6, 59,
-	29, 59,
-	30, 59,
-	-2, 49,
-	-1, 218,
-	18, 112,
-	19, 112,
-	36, 112,
+	-1, 47,
+	6, 63,
+	30, 63,
+	31, 63,
+	-2, 45,
+	-1, 60,
+	6, 64,
+	30, 64,
+	31, 64,
+	-2, 54,
+	-1, 101,
+	29, 54,
+	34, 54,
+	35, 66,
+	38, 54,
+	-2, 64,
+	-1, 102,
+	35, 16,
+	-2, 59,
+	-1, 103,
+	35, 17,
+	-2, 60,
+	-1, 104,
+	35, 18,
+	-2, 61,
+	-1, 105,
+	35, 19,
+	-2, 62,
+	-1, 106,
+	35, 20,
+	-2, 53,
+	-1, 241,
+	19, 120,
+	20, 120,
+	38, 120,
 	-2, 0,
 }
 
 const yyPrivate = 57344
 
-const yyLast = 314
+const yyLast = 347
 
 var yyAct = [...]uint8{
-	55, 89, 111, 39, 130, 172, 126, 181, 198, 141,
-	191, 43, 11, 92, 44, 40, 47, 58, 54, 45,
-	49, 50, 51, 52, 56, 12, 57, 154, 64, 65,
-	66, 67, 68, 13, 14, 142, 143, 140, 135, 14,
-	136, 56, 69, 53, 137, 131, 73, 138, 60, 156,
-	182, 182, 120, 48, 83, 42, 180, 57, 109, 122,
-	80, 57, 34, 79, 57, 57, 21, 97, 78, 57,
-	82, 94, 81, 20, 57, 96, 101, 101, 3, 148,
-	147, 146, 110, 107, 219, 59, 98, 189, 74, 99,
-	99, 99, 100, 103, 80, 178, 118, 99, 186, 74,
-	105, 116, 106, 101, 49, 50, 51, 52, 94, 177,
-	104, 60, 139, 115, 94, 61, 62, 79, 145, 117,
-	12, 119, 204, 167, 163, 160, 203, 144, 13, 14,
-	142, 143, 140, 135, 152, 136, 151, 102, 155, 137,
-	131, 57, 138, 161, 162, 26, 90, 49, 50, 51,
-	52, 56, 71, 166, 49, 50, 51, 52, 56, 57,
-	113, 139, 169, 165, 112, 173, 99, 188, 176, 93,
-	53, 182, 174, 171, 135, 175, 183, 53, 99, 187,
-	48, 70, 42, 5, 57, 108, 87, 48, 31, 42,
-	32, 57, 200, 201, 90, 211, 194, 205, 208, 99,
-	164, 114, 95, 207, 212, 63, 210, 139, 28, 215,
-	209, 173, 217, 216, 218, 213, 77, 168, 38, 139,
-	35, 220, 49, 50, 51, 52, 56, 159, 12, 77,
-	206, 74, 158, 74, 202, 2, 13, 14, 193, 76,
-	75, 185, 184, 196, 150, 53, 9, 149, 12, 19,
-	18, 124, 76, 17, 7, 48, 13, 14, 8, 57,
-	200, 201, 22, 143, 71, 36, 9, 24, 192, 16,
-	25, 64, 65, 66, 67, 68, 77, 121, 157, 199,
-	197, 195, 170, 134, 133, 132, 127, 125, 123, 214,
-	190, 129, 179, 153, 128, 33, 86, 85, 84, 46,
-	72, 41, 91, 88, 37, 30, 29, 27, 23, 10,
-	15, 6, 4, 1,
+	60, 93, 123, 201, 76, 146, 192, 142, 220, 212,
+	77, 157, 50, 47, 99, 52, 75, 59, 171, 46,
+	13, 67, 68, 69, 70, 71, 191, 61, 62, 14,
+	15, 158, 159, 156, 151, 213, 152, 40, 137, 202,
+	153, 147, 136, 154, 72, 200, 205, 54, 55, 56,
+	57, 61, 48, 49, 62, 173, 138, 62, 86, 87,
+	62, 62, 62, 122, 109, 35, 82, 83, 22, 21,
+	3, 58, 108, 84, 101, 164, 85, 163, 128, 110,
+	114, 114, 53, 120, 43, 242, 62, 48, 49, 210,
+	98, 198, 112, 112, 112, 113, 116, 183, 111, 119,
+	112, 54, 55, 56, 57, 61, 84, 54, 55, 56,
+	57, 78, 78, 132, 129, 118, 114, 117, 186, 64,
+	65, 134, 207, 197, 155, 58, 226, 134, 181, 83,
+	225, 131, 161, 178, 169, 133, 53, 168, 13, 162,
+	62, 160, 115, 27, 125, 124, 62, 14, 15, 209,
+	222, 223, 13, 202, 172, 73, 6, 10, 121, 179,
+	180, 14, 15, 158, 159, 156, 151, 95, 152, 232,
+	185, 91, 153, 147, 23, 154, 100, 234, 227, 155,
+	188, 189, 112, 32, 193, 41, 33, 196, 184, 182,
+	95, 203, 194, 62, 127, 112, 33, 29, 109, 208,
+	126, 195, 94, 216, 151, 187, 54, 55, 56, 57,
+	61, 48, 49, 66, 39, 36, 81, 177, 112, 63,
+	231, 229, 175, 176, 215, 94, 230, 235, 233, 155,
+	58, 239, 238, 78, 193, 240, 236, 241, 81, 202,
+	80, 53, 155, 43, 243, 62, 102, 103, 104, 105,
+	106, 48, 49, 54, 55, 56, 57, 61, 74, 49,
+	224, 228, 80, 79, 78, 214, 206, 204, 2, 167,
+	58, 166, 20, 19, 18, 107, 159, 58, 222, 223,
+	218, 53, 8, 43, 13, 62, 165, 140, 53, 92,
+	43, 17, 62, 14, 15, 9, 37, 81, 31, 26,
+	130, 4, 1, 10, 25, 67, 68, 69, 70, 71,
+	5, 96, 135, 44, 237, 145, 221, 219, 143, 199,
+	170, 144, 174, 190, 150, 149, 148, 141, 139, 97,
+	217, 211, 34, 16, 24, 45, 38, 30, 12, 28,
+	11, 7, 88, 89, 90, 51, 42,
 }
 
 var yyPact = [...]int16{
-	212, -1000, 37, 148, -1000, -1000, 246, -1000, -1000, 262,
-	228, 225, 224, 32, 25, 226, 108, -1000, -1000, -1000,
-	175, 157, -1000, -1000, -1000, -1000, 21, 189, 256, -1000,
-	187, 150, 76, 78, -1000, 267, -1000, -1000, 150, -1000,
-	146, -1000, 143, 203, -1000, -1000, -1000, 210, 218, -1000,
-	-1000, -1000, -1000, 33, -1000, -1000, -1000, 152, -1000, -1000,
-	-1000, 255, 111, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
-	24, 169, 35, -1000, 218, 100, 100, -1000, 72, 62,
-	203, -1000, 218, -1000, -1000, 44, 151, 17, 43, -1000,
-	-1000, 128, 168, -1000, -1000, 76, -1000, 150, -1000, -1000,
-	223, -1000, 100, 270, -1000, -1000, 58, 24, 11, -1000,
-	272, 23, -1000, 24, 150, 41, -1000, 223, -1000, 40,
-	-1000, 39, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
-	222, 219, -1000, -1000, -1000, 99, 97, 20, 8, 201,
-	88, 111, 111, 87, 167, -1000, -1000, -1000, -1000, -1000,
-	-1000, 218, -15, 86, -1000, -1000, 186, -1000, 150, -1000,
-	28, -1000, 250, 218, 150, 71, 57, 15, 136, -1000,
-	217, -1000, -1000, -1000, 216, 60, -1000, 111, 132, 49,
-	-1000, -1000, 261, 213, 218, -1000, -1000, 227, 242, 209,
-	90, -1000, 164, -1000, 205, -1000, 159, 174, -1000, 162,
-	150, -1000, -1000, -1000, 261, 16, -15, -1000, -1000, -1000,
-	-1000, -1000, -1000, -1000, -1000, -1000, -1000, 46, 118, 111,
-	-1000,
+	244, -1000, 27, -1000, 119, -1000, -1000, 282, -1000, -1000,
+	284, 248, 247, 246, 26, 25, 136, 104, -1000, -1000,
+	-1000, 162, 151, -1000, -1000, -1000, -1000, 22, 183, 287,
+	-1000, 182, 43, 78, 80, -1000, 301, -1000, -1000, 43,
+	-1000, 118, -1000, 249, -1000, -1000, 204, -1000, -1000, -1000,
+	-1000, -1000, 232, 97, -1000, -1000, -1000, -1000, 19, -1000,
+	-1000, -1000, 135, -1000, 280, 165, -1000, -1000, -1000, -1000,
+	-1000, -1000, -1000, 242, 161, 30, -1000, 38, 97, 103,
+	103, -1000, 77, 75, 204, -1000, 97, -1000, -1000, 42,
+	122, 20, 161, -1000, -1000, 107, 106, 166, 164, 159,
+	-1000, -1000, -1000, -1000, -1000, -1000, -1000, 36, -1000, 43,
+	295, -1000, -1000, 210, -1000, 103, 291, -1000, -1000, 73,
+	17, -1, -1000, 18, -1000, -1000, 17, 43, -1000, -1000,
+	35, 210, -1000, 33, -1000, -1000, -1000, 277, -1000, -1000,
+	-1000, -1000, -1000, -1000, -1000, -1000, 245, 243, -1000, -1000,
+	-1000, 98, 95, 11, 12, 190, 94, 165, 165, 89,
+	154, -1000, 38, -1000, -1000, 57, -1000, -1000, 97, -15,
+	79, -1000, -1000, 173, -1000, 43, 43, -1000, 14, -1000,
+	262, 97, 43, -1000, 83, 51, 2, 116, -1000, -1000,
+	241, 3, -1000, -1000, 240, 82, -1000, 165, 112, 49,
+	-1000, -1000, -8, 239, 97, 171, -1000, -1000, 263, 259,
+	234, 92, -1000, 143, -1000, 235, 43, -1000, 188, 131,
+	-1000, 142, 43, -1000, -1000, -1000, -8, 202, -15, -1000,
+	-1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
+	45, 150, 165, -1000,
 }
 
 var yyPgo = [...]int16{
-	0, 313, 312, 311, 254, 310, 251, 309, 12, 308,
-	307, 169, 306, 305, 304, 3, 17, 303, 15, 302,
-	301, 300, 13, 11, 14, 19, 18, 299, 0, 16,
-	298, 297, 296, 295, 1, 294, 293, 292, 7, 291,
-	290, 10, 289, 2, 288, 287, 6, 286, 4, 285,
-	284, 283, 282, 5, 9, 281, 280, 8, 279, 278,
+	0, 346, 19, 12, 345, 17, 0, 344, 343, 342,
+	13, 15, 14, 176, 4, 341, 287, 340, 339, 338,
+	337, 185, 275, 336, 10, 16, 335, 282, 334, 333,
+	332, 331, 2, 330, 6, 329, 1, 328, 327, 326,
+	325, 324, 11, 323, 5, 322, 7, 321, 320, 319,
+	3, 318, 317, 8, 316, 315, 9, 314, 313, 312,
+	311, 310, 302, 301,
 }
 
 var yyR1 = [...]int8{
-	0, 1, 2, 3, 3, 6, 6, 6, 5, 5,
-	9, 9, 7, 10, 10, 11, 11, 11, 11, 11,
-	8, 12, 12, 14, 14, 13, 16, 16, 17, 17,
-	18, 15, 15, 15, 19, 19, 21, 21, 21, 20,
-	20, 25, 25, 25, 25, 25, 23, 23, 26, 26,
-	27, 24, 24, 24, 24, 24, 24, 24, 29, 29,
-	22, 22, 28, 30, 30, 32, 32, 31, 31, 4,
-	33, 33, 35, 36, 36, 37, 37, 39, 38, 40,
-	40, 40, 41, 42, 42, 34, 43, 43, 44, 44,
-	44, 44, 44, 44, 44, 44, 45, 45, 45, 49,
-	52, 52, 50, 51, 54, 46, 55, 55, 55, 47,
-	56, 56, 57, 58, 58, 53, 53, 48, 59, 59,
+	0, 63, 62, 61, 15, 15, 16, 16, 16, 29,
+	29, 28, 28, 17, 18, 18, 13, 13, 13, 13,
+	13, 19, 20, 20, 23, 23, 22, 21, 21, 58,
+	58, 24, 24, 26, 14, 14, 14, 60, 60, 35,
+	35, 25, 25, 25, 1, 1, 3, 3, 3, 3,
+	3, 2, 2, 5, 5, 4, 10, 10, 10, 10,
+	10, 10, 10, 11, 11, 12, 12, 6, 9, 9,
+	7, 7, 59, 59, 8, 8, 27, 30, 30, 47,
+	48, 48, 49, 49, 55, 50, 31, 31, 31, 56,
+	57, 57, 36, 36, 32, 32, 37, 37, 37, 37,
+	37, 37, 37, 37, 38, 38, 38, 39, 43, 43,
+	40, 41, 42, 46, 33, 33, 33, 51, 52, 52,
+	53, 54, 54, 34, 34, 44, 45, 45, 45,
 }
 
 var yyR2 = [...]int8{
-	0, 3, 5, 0, 2, 2, 2, 2, 0, 2,
-	1, 1, 5, 0, 2, 1, 1, 1, 1, 1,
-	3, 2, 2, 0, 2, 2, 2, 1, 0, 4,
-	5, 4, 1, 3, 3, 5, 0, 1, 3, 1,
-	1, 3, 2, 4, 3, 1, 1, 1, 1, 1,
-	3, 3, 2, 3, 1, 1, 1, 1, 1, 1,
-	1, 1, 2, 1, 1, 2, 3, 0, 4, 6,
-	0, 1, 6, 1, 1, 1, 1, 5, 3, 0,
-	1, 3, 3, 1, 1, 3, 0, 2, 1, 1,
-	1, 1, 1, 1, 2, 2, 1, 1, 1, 9,
-	1, 1, 2, 4, 4, 6, 0, 2, 2, 7,
-	1, 2, 3, 2, 1, 0, 1, 2, 2, 1,
+	0, 0, 4, 5, 0, 2, 2, 2, 2, 0,
+	2, 1, 1, 5, 0, 2, 1, 1, 1, 1,
+	1, 3, 2, 2, 0, 2, 2, 2, 1, 1,
+	1, 0, 4, 5, 4, 1, 3, 1, 1, 3,
+	5, 0, 1, 3, 1, 1, 3, 2, 4, 3,
+	1, 1, 1, 1, 1, 3, 3, 2, 3, 1,
+	1, 1, 1, 1, 1, 1, 1, 2, 1, 1,
+	2, 3, 1, 3, 0, 4, 6, 0, 1, 6,
+	1, 1, 1, 1, 5, 3, 0, 1, 3, 3,
+	1, 1, 3, 2, 0, 2, 1, 1, 1, 1,
+	1, 1, 2, 2, 1, 1, 1, 9, 4, 1,
+	2, 4, 4, 6, 0, 2, 2, 7, 1, 2,
+	3, 2, 1, 0, 1, 2, 2, 2, 1,
 }
 
 var yyChk = [...]int16{
-	-1000, -1, 23, 41, -2, 35, -3, -4, -6, 20,
-	-7, -8, 2, 10, 11, -5, 7, 25, 25, 25,
-	41, 41, 36, -9, -6, -4, 37, -10, 33, -12,
-	-13, 31, 33, -33, 41, 31, 9, -14, 31, -15,
-	-18, -20, 39, -23, -24, -25, -27, -29, 37, 4,
-	5, 6, 7, 27, -26, -28, 8, 41, -16, 9,
-	-18, 39, 38, -11, 4, 5, 6, 7, 8, -15,
-	35, 9, -21, -15, 28, 30, 29, 6, -25, -24,
-	-23, -26, 37, -28, -30, -31, -32, 34, -17, -34,
-	35, -19, -22, -11, -28, 33, 40, 32, -23, -24,
-	-29, -28, 37, -29, 38, 38, -25, 39, 34, 41,
-	39, -43, 36, 32, 33, -16, -15, -29, 38, -22,
-	41, 5, 36, -44, -6, -45, -46, -47, -35, -39,
-	-48, 22, -49, -50, -51, 15, 17, 21, 24, -28,
-	14, -54, 12, 13, -22, -15, 40, 40, 40, 25,
-	25, 37, 37, -36, 7, -28, 41, -59, 31, 26,
-	37, -34, -34, 37, 33, -23, -28, 37, 31, -15,
-	-52, -8, -53, -48, -54, -23, -15, 38, 38, -37,
-	41, -38, 35, -38, 25, 25, 38, -34, 35, 38,
-	-40, -41, 7, 25, -23, -55, 16, -56, -57, -58,
-	18, 19, 25, 36, 32, 33, 25, -46, -34, 36,
-	-57, 33, -15, -41, -42, -15, -38, -53, -43, 38,
-	-34,
+	-1000, -62, 24, 43, -63, -61, 37, -15, -27, -16,
+	21, -17, -19, 2, 11, 12, -29, 7, 26, 26,
+	26, 43, 43, 38, -28, -16, -27, 39, -18, 35,
+	-20, -22, 32, 35, -30, 43, 32, 9, -23, 32,
+	-14, -21, -1, 41, -58, -26, -2, -10, 9, 10,
+	-3, -4, -11, 39, 4, 5, 6, 7, 28, -5,
+	-6, 8, 43, -21, 41, 40, -13, 4, 5, 6,
+	7, 8, -14, 37, 9, -25, -14, -24, 29, 31,
+	30, 6, -3, -10, -2, -5, 39, -6, -9, -8,
+	-7, 36, 9, -36, 37, 2, -60, -35, -25, -12,
+	-13, -6, 4, 5, 6, 7, 8, -22, 42, 34,
+	41, -2, -10, -11, -6, 39, -11, 40, 40, -3,
+	41, 36, 43, -32, 38, 38, 34, 35, 42, -14,
+	5, -11, 40, -12, -6, -59, 43, 39, 38, -37,
+	-16, -38, -46, -51, -47, -55, -44, 23, -39, -40,
+	-41, 16, 18, 22, 25, -6, 15, -42, 13, 14,
+	-12, -14, -24, 42, 42, 9, 26, 26, 39, 39,
+	-48, 7, -6, 43, -45, 32, 33, 27, 39, -36,
+	-36, 39, 35, 40, -2, -6, 39, 32, -14, -14,
+	-43, 12, -34, -44, -42, -2, -14, 40, 40, -49,
+	43, -50, 37, -50, 26, 43, 26, 40, -36, 37,
+	40, -31, -56, 43, 26, -2, 32, -33, 17, -52,
+	-53, -54, 19, 20, 26, 38, 34, 35, 26, -14,
+	-46, -36, 38, -53, 35, -14, -56, -57, -14, -50,
+	-34, -32, 40, -36,
 }
 
-var yyDef = [...]int8{
-	0, -2, 0, 0, 1, 3, 0, 8, 4, 0,
-	0, 0, 0, 0, 0, 0, 0, 5, 6, 7,
-	13, 0, 2, 9, 10, 11, 70, 0, 0, 20,
-	23, 0, 0, 0, 71, 0, 14, 21, 0, 22,
-	0, 32, 36, 39, -2, 46, 47, 0, 0, 54,
-	55, 56, 57, 0, 45, -2, 48, 67, 25, 28,
-	27, 0, 0, 12, 15, 16, 17, 18, 19, 24,
-	0, 0, 0, 37, 0, 0, 0, 52, 46, 58,
-	0, 42, 0, 49, 62, 63, 64, 0, 26, 69,
-	86, 0, 0, 60, 61, 0, 33, 0, 41, 58,
-	50, 59, 0, 51, 44, 53, 46, 0, 0, 65,
-	0, 0, 31, 0, 0, 0, 38, 0, 43, 0,
-	66, 0, 85, 87, 88, 89, 90, 91, 92, 93,
-	0, 0, 96, 97, 98, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 34, 30, 68, 29, 94,
-	95, 0, 0, 0, 73, 74, 0, 117, 0, 119,
-	115, 102, 0, 0, 0, 0, 0, 0, 0, 118,
-	0, 100, 101, 116, 0, 0, 35, 0, 0, 0,
-	75, 76, 79, 0, 0, 103, 104, 106, 0, 0,
-	0, 80, 0, 77, 0, 105, 0, 0, 110, 0,
-	0, 114, 72, 78, 0, 0, 115, 107, 108, 109,
-	111, 86, 113, 81, 82, 83, 84, 0, -2, 0,
-	99,
+var yyDef = [...]int16{
+	0, -2, 0, 1, 0, 2, 4, 0, 9, 5,
+	0, 0, 0, 0, 0, 0, 0, 0, 6, 7,
+	8, 14, 0, 3, 10, 11, 12, 77, 0, 0,
+	21, 24, 0, 0, 0, 78, 0, 15, 22, 0,
+	23, 0, 35, 41, 31, 28, 44, -2, 29, 30,
+	51, 52, 0, 0, 59, 60, 61, 62, 0, 50,
+	-2, 53, 74, 26, 0, 0, 13, 16, 17, 18,
+	19, 20, 25, 41, 29, 0, 42, 27, 0, 0,
+	0, 57, 51, 63, 0, 47, 0, 54, 67, 68,
+	69, 0, 0, 76, 94, 0, 0, 37, 38, 0,
+	65, -2, -2, -2, -2, -2, -2, 0, 36, 0,
+	0, 46, 63, 55, 64, 0, 56, 49, 58, 51,
+	0, 0, 70, 0, 93, 34, 0, 0, 31, 43,
+	0, 0, 48, 0, 66, 71, 72, 0, 92, 95,
+	96, 97, 98, 99, 100, 101, 0, 0, 104, 105,
+	106, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 39, 33, 32, 75, 0, 102, 103, 0, 0,
+	0, 80, 81, 0, 125, 0, 0, 128, 123, 110,
+	0, 0, 0, 73, 0, 0, 0, 0, 126, 127,
+	0, 0, 109, 124, 0, 0, 40, 0, 0, 0,
+	82, 83, 86, 0, 0, 0, 111, 112, 114, 0,
+	0, 0, 87, 0, 84, 0, 0, 113, 0, 0,
+	118, 0, 0, 122, 79, 85, 0, 0, 123, 108,
+	115, 116, 117, 119, 94, 121, 88, 89, 90, 91,
+	0, -2, 0, 107,
 }
 
 var yyTok1 = [...]int8{
@@ -293,7 +340,7 @@ var yyTok2 = [...]int8{
 	12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
 	22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
 	32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-	42,
+	42, 43, 44,
 }
 
 var yyTok3 = [...]int8{
@@ -637,6 +684,775 @@ yydefault:
 	// dummy call; replaced with literal code
 	switch yynt {
 
+	case 1:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:62
+		{
+			createModule(yyDollar[2].scope, yyDollar[2].content)
+		}
+	case 2:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:62
+		{
+			saveModule(yyDollar[4].parsed, yyDollar[1].result)
+		}
+	case 3:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line ../yacc/butterfly.y:72
+		{
+			yyVAL.parsed = blJoin(yyDollar[2].parsed, yyDollar[3].parsed, yyDollar[4].parsed)
+		}
+	case 4:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:76
+		{
+			yyVAL.parsed = ""
+		}
+	case 5:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:77
+		{
+			yyVAL.parsed = blJoin(yyDollar[1].parsed, yyDollar[2].parsed)
+		}
+	case 6:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:79
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 7:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:80
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 8:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:81
+		{
+			yyVAL.parsed = ""
+		}
+	case 9:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:83
+		{
+			yyVAL.parsed = ""
+		}
+	case 10:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:84
+		{
+			yyVAL.parsed = blJoin(yyDollar[1].parsed, yyDollar[2].parsed)
+		}
+	case 11:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:86
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 12:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:87
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 13:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line ../yacc/butterfly.y:91
+		{
+			//	addConst($<scope>$,$2,$5,$3)
+			yyVAL.parsed = wsJoin(yyDollar[1].content, yyDollar[2].content, yyDollar[3].parsed, yyDollar[4].content, yyDollar[5].parsed)
+		}
+	case 14:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:96
+		{
+			yyVAL.parsed = ""
+		}
+	case 15:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:97
+		{
+			yyVAL.parsed = getType(yyDollar[2].content)
+		}
+	case 16:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:99
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 17:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:100
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 18:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:101
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 19:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:102
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 20:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:103
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 21:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:107
+		{
+			yyVAL.parsed = wsJoin("var", yyDollar[2].content, yyDollar[3].parsed)
+		}
+	case 22:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:111
+		{
+			yyVAL.parsed = wsJoin(yyDollar[1].parsed, yyDollar[2].parsed)
+		}
+	case 23:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:112
+		{
+			yyVAL.parsed = wsJoin(yyDollar[1].content, yyDollar[2].parsed)
+		}
+	case 24:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:114
+		{
+			yyVAL.parsed = ""
+		}
+	case 25:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:115
+		{
+			yyVAL.parsed = wsJoin(yyDollar[1].content, yyDollar[2].parsed)
+		}
+	case 26:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:117
+		{
+			yyVAL.parsed = yyDollar[2].parsed
+		}
+	case 27:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:119
+		{
+			yyVAL.parsed = yyDollar[2].parsed + getType(yyDollar[1].parsed)
+		}
+	case 28:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:119
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 29:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:121
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 30:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:121
+		{
+			yyVAL.parsed = "interface{}"
+		}
+	case 31:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:123
+		{
+			yyVAL.parsed = ""
+		}
+	case 32:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:124
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, "[", yyDollar[3].content, "]")
+		}
+	case 33:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line ../yacc/butterfly.y:126
+		{
+			yyVAL.parsed = concat(yyDollar[5].parsed, "map[", getType(yyDollar[2].content), "]", yyDollar[3].parsed)
+		}
+	case 34:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:130
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, "{", yyDollar[3].parsed, "}")
+		}
+	case 35:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:131
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 36:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:132
+		{
+			yyVAL.parsed = concat("interface{}", "{", yyDollar[2].parsed, "}")
+		}
+	case 37:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:134
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 38:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:134
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 39:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:136
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, ":", yyDollar[3].parsed)
+		}
+	case 40:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line ../yacc/butterfly.y:137
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, ", ", yyDollar[3].parsed, ":", yyDollar[5].parsed)
+		}
+	case 41:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:139
+		{
+			yyVAL.parsed = ""
+		}
+	case 42:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:140
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 43:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:141
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, ",", yyDollar[3].parsed)
+		}
+	case 44:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:145
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 45:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:146
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 46:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:149
+		{
+			yyVAL.parsed = wsJoin(yyDollar[1].parsed, yyDollar[2].content, yyDollar[3].parsed)
+		}
+	case 47:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:151
+		{
+			yyVAL.parsed = concat("!(", yyDollar[2].parsed, ")")
+		}
+	case 48:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:153
+		{
+			yyVAL.parsed = concat("!(", yyDollar[3].parsed, ")")
+		}
+	case 49:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:155
+		{
+			yyVAL.parsed = concat("(", yyDollar[2].parsed, ")")
+		}
+	case 50:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:157
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 51:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:159
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 52:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:160
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 53:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:162
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 54:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:163
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 55:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:165
+		{
+			yyVAL.parsed = wsJoin(yyDollar[1].parsed, yyDollar[2].content, yyDollar[3].parsed)
+		}
+	case 56:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:167
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, yyDollar[2].content, yyDollar[3].parsed)
+		}
+	case 57:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:168
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, yyDollar[2].content)
+		}
+	case 58:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:169
+		{
+			yyVAL.parsed = concat("(", yyDollar[2].parsed, ")")
+		}
+	case 59:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:170
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 60:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:171
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 61:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:172
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 62:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:173
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 63:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:175
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 64:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:176
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 65:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:178
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 66:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:179
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 67:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:181
+		{
+			yyVAL.parsed = concat(yyDollar[1].content, yyDollar[2].parsed)
+		}
+	case 68:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:183
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 69:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:184
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 70:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:186
+		{
+			yyVAL.parsed = concat("[\"", yyDollar[2].content, "\"]")
+		}
+	case 71:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:187
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, yyDollar[3].parsed)
+		}
+	case 72:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:189
+		{
+			yyVAL.parsed = concat("[\"", yyDollar[1].content, "\"]")
+		}
+	case 73:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:190
+		{
+			yyVAL.parsed = concat("(", getType(yyDollar[2].content), ")")
+		}
+	case 74:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:192
+		{
+			yyVAL.parsed = ""
+		}
+	case 75:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:194
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, "[", yyDollar[3].parsed, "])")
+		}
+	case 76:
+		yyDollar = yyS[yypt-6 : yypt+1]
+//line ../yacc/butterfly.y:198
+		{
+			yyVAL.parsed = eventListen(yyDollar[2].content, yyDollar[4].parsed, yyDollar[6].parsed, yyDollar[2].scope)
+		}
+	case 77:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:202
+		{
+			yyVAL.parsed = "_"
+		}
+	case 78:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:203
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 79:
+		yyDollar = yyS[yypt-6 : yypt+1]
+//line ../yacc/butterfly.y:205
+		{
+			yyVAL.parsed = eventShare(yyDollar[2].parsed, yyDollar[4].parsed, yyDollar[1].scope)
+		}
+	case 80:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:209
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 81:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:209
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 82:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:211
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
+	case 83:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:211
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 84:
+		yyDollar = yyS[yypt-5 : yypt+1]
+//line ../yacc/butterfly.y:213
+		{
+			yyVAL.parsed = wsJoin("var", yyDollar[2].content, yyDollar[3].content, yyDollar[4].parsed)
+		}
+	case 85:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:217
+		{
+			yyVAL.parsed = concat("map[string]interface{}{", yyDollar[2].parsed, "}")
+		}
+	case 86:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:219
+		{
+			yyVAL.parsed = ""
+		}
+	case 87:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:220
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 88:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:221
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, ",\n", yyDollar[2].content)
+		}
+	case 89:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:223
+		{
+			yyVAL.parsed = concat("\"", yyDollar[1].content, "\": ", yyDollar[3].parsed)
+		}
+	case 90:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:227
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 91:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:227
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 92:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:231
+		{
+			yyVAL.parsed = blJoin("{", yyDollar[2].parsed, "}")
+		}
+	case 93:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:231
+		{
+			yyVAL.parsed = "{}"
+		}
+	case 94:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:233
+		{
+			yyVAL.parsed = ""
+		}
+	case 95:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:234
+		{
+			yyVAL.parsed = blJoin(yyDollar[1].parsed, yyDollar[2].parsed)
+		}
+	case 96:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:236
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 97:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:237
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 98:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:238
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 99:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:239
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 100:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:240
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 101:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:241
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 102:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:242
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 103:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:243
+		{
+			yyVAL.parsed = "return"
+		}
+	case 104:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:247
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 105:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:248
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 106:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:249
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 107:
+		yyDollar = yyS[yypt-9 : yypt+1]
+//line ../yacc/butterfly.y:251
+		{
+			yyVAL.parsed = concat("for ", yyDollar[3].parsed, ";", yyDollar[5].parsed, ";", yyDollar[7].parsed, " ", yyDollar[9].parsed)
+		}
+	case 108:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:255
+		{
+			yyVAL.parsed = wsJoin(yyDollar[2].content, ":=", yyDollar[4].parsed)
+		}
+	case 109:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:256
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 110:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:258
+		{
+			yyVAL.parsed = wsJoin("for", yyDollar[1].parsed, yyDollar[2].parsed)
+		}
+	case 111:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:260
+		{
+			yyVAL.parsed = concat("for {", yyDollar[2].parsed, " if ", yyDollar[3].parsed, " { break }}")
+		}
+	case 112:
+		yyDollar = yyS[yypt-4 : yypt+1]
+//line ../yacc/butterfly.y:264
+		{
+			yyVAL.parsed = yyDollar[3].parsed
+		}
+	case 113:
+		yyDollar = yyS[yypt-6 : yypt+1]
+//line ../yacc/butterfly.y:268
+		{
+			yyVAL.parsed = wsJoin("if", yyDollar[3].parsed, yyDollar[5].parsed, yyDollar[6].parsed)
+		}
+	case 114:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:272
+		{
+			yyVAL.parsed = ""
+		}
+	case 115:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:273
+		{
+			yyVAL.parsed = "else " + yyDollar[2].parsed
+		}
+	case 116:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:273
+		{
+			yyVAL.parsed = "else " + yyDollar[2].parsed
+		}
+	case 117:
+		yyDollar = yyS[yypt-7 : yypt+1]
+//line ../yacc/butterfly.y:275
+		{
+			yyVAL.parsed = wsJoin("switch", yyDollar[3].parsed, "{\n", yyDollar[6].parsed, "\n}")
+		}
+	case 118:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:279
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 119:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:279
+		{
+			yyVAL.parsed = blJoin(yyDollar[1].parsed, yyDollar[2].parsed)
+		}
+	case 120:
+		yyDollar = yyS[yypt-3 : yypt+1]
+//line ../yacc/butterfly.y:281
+		{
+			yyVAL.parsed = concat(yyDollar[1].parsed, ":", yyDollar[3].parsed)
+		}
+	case 121:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:285
+		{
+			yyVAL.parsed = wsJoin("case", yyDollar[2].parsed)
+		}
+	case 122:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:286
+		{
+			yyVAL.parsed = "default"
+		}
+	case 123:
+		yyDollar = yyS[yypt-0 : yypt+1]
+//line ../yacc/butterfly.y:290
+		{
+			yyVAL.parsed = ""
+		}
+	case 124:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:291
+		{
+			yyVAL.parsed = yyDollar[1].parsed
+		}
+	case 125:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:293
+		{
+			yyVAL.parsed = yyDollar[1].parsed + yyDollar[2].parsed
+		}
+	case 126:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:295
+		{
+			yyVAL.parsed = yyDollar[1].content + yyDollar[2].parsed
+		}
+	case 127:
+		yyDollar = yyS[yypt-2 : yypt+1]
+//line ../yacc/butterfly.y:296
+		{
+			yyVAL.parsed = yyDollar[1].content + yyDollar[2].parsed
+		}
+	case 128:
+		yyDollar = yyS[yypt-1 : yypt+1]
+//line ../yacc/butterfly.y:297
+		{
+			yyVAL.parsed = yyDollar[1].content
+		}
 	}
 	goto yystack /* stack new state and value */
 }

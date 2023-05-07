@@ -31,6 +31,7 @@ const (
 	// Reserved keywords
 	boolean          = "(true|false)\\b"
 	typePattern      = "(bool|byte|int|uint|float|string)\\b"
+	anyType          = "any\\b"
 	constDeclaration = "const\\b"
 	letDeclaration   = "let\\b"
 	doLoop           = "do\\b"
@@ -56,7 +57,8 @@ const (
 	logic      = "&&|[|]{2}"
 	arithmetic = "[+\\-*/%]"
 	comparator = "[=!><]=|>|<"
-	assign     = arithmetic + "?="
+	assign     = "="
+	expAssign  = arithmetic + "="
 	comma      = ","
 	colon      = ":"
 	dot        = "\\.\\b"
@@ -101,6 +103,7 @@ var matchers = [...]tokMatcher{
 
 	{tokPattern(boolean), parser.BOOLEAN},
 	{tokPattern(typePattern), parser.TYPE},
+	{tokPattern(anyType), parser.ANY},
 	{tokPattern(constDeclaration), parser.CONST},
 	{tokPattern(letDeclaration), parser.LET},
 	{tokPattern(doLoop), parser.DO},
@@ -114,7 +117,8 @@ var matchers = [...]tokMatcher{
 
 	{tokPattern(delimiter), parser.DELIMITER},
 	{tokPattern(increment), parser.INCREMENT},
-	{tokPattern(assign), parser.ASSIGN}, // assign must be parsed before arithmetic
+	{tokPattern(expAssign), parser.EXP_ASSIGN}, // expAssign must be parsed before arithmetic
+	{tokPattern(assign), parser.ASSIGN},
 	{tokPattern(not), parser.NOT},
 	{tokPattern(logic), parser.LOGIC},
 	{tokPattern(arithmetic), parser.ARITHMETIC},

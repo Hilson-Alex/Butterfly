@@ -3,7 +3,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -31,7 +30,8 @@ func main() {
 
 func compileAll(entries []os.DirEntry) {
 	var lexerResults = lexAll(entries)
-	parseAll(lexerResults)
+	var parseResults = parseAll(lexerResults)
+	generateAll(parseResults)
 }
 
 func lexAll(entries []os.DirEntry) [][]*lexer.Token {
@@ -58,17 +58,40 @@ func lexAll(entries []os.DirEntry) [][]*lexer.Token {
 	return parsedTokens
 }
 
-func parseAll(lexerResults [][]*lexer.Token) {
-	var failedParsers = make([]error, 0, len(lexerResults))
+func parseAll(lexerResults [][]*lexer.Token) []parser.ParserResult {
+	var failed = false
+	var results = make([]parser.ParserResult, 0, len(lexerResults))
 	for _, tokens := range lexerResults {
-		if !parser.Parse(tokens) {
-			failedParsers = append(failedParsers, errors.New("found syntax errorrs on file "+tokens[0].FileName()))
+		var parserResult = parser.Parse(tokens)
+		if !parserResult.Success {
+			failed = true
+			continue
+		}
+		results = append(results, parserResult)
+	}
+	if failed {
+		generalLogger.Panic("syntax analysis failed")
+	}
+	return results
+}
+
+func generateAll(parserResults []parser.ParserResult) {
+	var failedFiles = make([]error, 0, len(parserResults))
+	for _, result := range parserResults {
+		if err := bfio.GenerateGoFile(result.ModuleName, result.Result); err != nil {
+			failedFiles = append(failedFiles, err)
 		}
 	}
-	if len(failedParsers) > 0 {
-		generalLogger.Panic(bfErrors.CreateNestedErr("syntax analysis failed", failedParsers...))
+	if len(failedFiles) > 0 {
+		generalLogger.Panic(bfErrors.CreateNestedErr("error generating files", failedFiles...))
 	}
-	fmt.Println("Syntax analysis completed :)")
+	_ = bfio.GoFmtGenerated()
+	if err := bfio.GoCompile(); err != nil {
+		generalLogger.Panic(bfErrors.CreateNestedErr("error generating executable", err))
+	}
+	if !bfio.KeepGenFiles {
+		bfio.CleanGeneratedFiles()
+	}
 }
 
 func listTokens() {
