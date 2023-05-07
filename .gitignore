@@ -8,6 +8,7 @@
 # Dependency directories (remove the comment below to include it)
 *.output
 .idea
+/test-programs
 
 # generated code
 /out/resources/butterfly_embbed/generated_code/*.go
