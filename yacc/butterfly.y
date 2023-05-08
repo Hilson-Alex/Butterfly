@@ -180,11 +180,11 @@ baseValue: baseConstValue 	{$$ = $1}
 
 valueAccess: IDENTIFIER addrOrProperty {$$ = concat($1,$2)};
 
-addrOrProperty: varAddr {$$ = $1}
-	| properties 		{$$ = $1};
+addrOrProperty: varAddr 	{$$ = $1}
+	| properties varAddr	{$$ = $1 + $2};
 
 properties: DOT IDENTIFIER {$$ = concat("[\"",$2,"\"]")}
-	| properties DOT identifyerOrType {$$ = concat($1,$3)};
+	| properties DOT identifyerOrType {$$ = concat($1,".(map[string]interface{})",$3)};
 
 identifyerOrType: IDENTIFIER {$$ = concat("[\"",$1,"\"]")}
 	| OP_PARENT TYPE CL_PARENT {$$ = concat("(",getType($2),")")}
