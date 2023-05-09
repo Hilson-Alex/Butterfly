@@ -129,7 +129,7 @@ mapType: OP_SQUARE TYPE typeNote CL_SQUARE arrNotation {
 
 value: typeDef OP_CURLY compoundValue CL_CURLY 	{$$ = concat($1,"{", $3, "}")}
 	| expression 							{$$ = $1}
-	| OP_SQUARE arrValue CL_SQUARE 		 	{$$ = concat("interface{}","{",$2,"}")};
+	| OP_SQUARE arrValue CL_SQUARE 		 	{$$ = concat("[]interface{}","{",$2,"}")};
 
 compoundValue: mapValue {$$ = $1} | arrValue {$$ = $1};
 
@@ -218,7 +218,7 @@ messageValue: OP_CURLY messageContent CL_CURLY {$$ = concat("map[string]interfac
 
 messageContent: /*empty*/ {$$ = ""}
 	| messageItem {$$ = $1}
-	| messageContent COMMA messageItem {$$ = concat($1,",\n",$2)};
+	| messageContent COMMA messageItem {$$ = concat($1,",",$3)};
 
 messageItem: IDENTIFIER COLON itemValue {
 	$$ = concat("\"",$1,"\": ",$3)

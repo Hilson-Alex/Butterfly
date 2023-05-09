@@ -13,7 +13,7 @@ type __bfResponse func(message BF__MessageInfo)
 
 var __eventsRegisteredResponses = make(__bfChannel)
 
-var BF__wg sync.WaitGroup
+var __bfWg sync.WaitGroup
 
 func BF__EventSubscribe(event, module string, callback __bfCallback) {
 	var arr, present = __eventsRegisteredResponses[event]
@@ -30,10 +30,14 @@ func BF__Dispatch(event string, message BF__MessageInfo) {
 		fmt.Printf("No responses for event %q\n", event)
 		return
 	}
-	BF__wg.Add(len(responses))
+	__bfWg.Add(len(responses))
 	for _, response := range responses {
 		go response(message)
 	}
+}
+
+func BF__Run() {
+	__bfWg.Wait()
 }
 
 func __withErrorHandling(event, module string, callback __bfCallback) __bfResponse {
@@ -41,7 +45,7 @@ func __withErrorHandling(event, module string, callback __bfCallback) __bfRespon
 		message.EventName = event
 		message.ReceiverName = module
 		defer func() {
-			BF__wg.Done()
+			__bfWg.Done()
 			if r := recover(); r != nil {
 				LogError(&message, r)
 			}

@@ -17,6 +17,5 @@ func main() {
 		"systemArgs": os.Args,
 	})
 	runtime.BF__Dispatch("Start", bootMessage)
-	// runtime.BF__RunEventQueue()
-	runtime.BF__wg.Wait()
+	runtime.BF__Run()
 }
