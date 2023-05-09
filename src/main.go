@@ -85,13 +85,14 @@ func generateAll(parserResults []parser.ParserResult) {
 	if len(failedFiles) > 0 {
 		generalLogger.Panic(bfErrors.CreateNestedErr("error generating files", failedFiles...))
 	}
-	_ = bfio.GoFmtGenerated()
 	if err := bfio.GoCompile(); err != nil {
 		generalLogger.Panic(bfErrors.CreateNestedErr("error generating executable", err))
 	}
 	if !bfio.KeepGenFiles {
 		bfio.CleanGeneratedFiles()
+		return
 	}
+	_ = bfio.GoFmtGenerated()
 }
 
 func listTokens() {

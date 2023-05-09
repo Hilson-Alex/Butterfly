@@ -29,6 +29,8 @@ These tokens are words that have a special meaning on the language.
 
 - **TYPE:** `bool`, `byte`, `int`, `uint`, `float` or `string`. Used to type variables or constants.
 
+- **ANY:** `any` is a special type that can only be used on variables. It can represent any value. 
+
 - **CONST:** `const` keyword for constants declaration.
 
 - **LET:** `let` keyword for variables declaration.
@@ -83,8 +85,10 @@ Special symbols for the language, used for operations or segregate values.
 grater or equals (`>=`) and lower or equals (`<=`).
 
 - **ASSIGN:** The assign token (`=`) assigns a value to a constant or variable. 
-It can be associated with any arithmetic token to apply the operation before assign.
-Ex: `value += 45` (as a shortcut to `value = value + 45`).
+
+- **EXP_ASSIGN:** The expression assign token is used on reassignments, when any arithmetic token
+  is placed before the assign token to apply the operation before assignment.
+  Ex: `value += 45` (as a shortcut to `value = value + 45`).
 
 - **COMMA:** The comma separator (`,`).
 
