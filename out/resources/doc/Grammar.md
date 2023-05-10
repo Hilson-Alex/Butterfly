@@ -29,10 +29,10 @@ To build the expressions, some operators can be used to match the valid strings:
  - `A | B`: matches A or B;
 
 ## Grammar
-
+```regexp
 Module ::= "module" Identifier ModuleBody;
 
-Identifier ::= \[a-zA-Z_]\[a-zA-Z0-9_]*;
+Identifier ::= [a-zA-Z_][a-zA-Z0-9_]*;
 
 ModuleBody ::= "{"
     Declaration*
@@ -48,13 +48,13 @@ BaseConstValue ::= FloatNumber | UnsignedNumber | SignedNumber | Text | Boolean;
 
 Boolean ::= "true" | "false";
 
-UnsignedNumber ::= \[0-9]+;
+UnsignedNumber ::= [0-9]+;
 
 SignedNumber ::= "-" UnsignedNumber;
 
 FloatNumber ::= (SignedNumber | UnsignedNumber) "." UnsignedNumber;
 
-Text ::= '"' (\[^"\n\] | '\' ('"' | \[A-Za-z]) | '\\')* '"';
+Text ::= '"' ([^"\n\] | '\' ('"' | [A-Za-z]) | '\\')* '"';
 
 VarIdentifier ::= "let" Identifier (TypeNote ( "=" Value)? | "=" Value);
 
@@ -64,11 +64,11 @@ Type ::= "bool" | "byte" | "int" | "uint" | "float" | "string";
 
 AnyType ::= Type | "any";
 
-ArrNotation ::= ("\[" UnsignedNumber "]")*;
+ArrNotation ::= ("[" UnsignedNumber "]")*;
 
-MapType ::= "\[" Type TypeNote "]" ArrNotation;
+MapType ::= "[" Type TypeNote "]" ArrNotation;
 
-Value ::= (AnyType ArrNotation | MapType) "{" (MapValue | ArrValue) "}" | Expression | "\[" ArrValue "]";
+Value ::= (AnyType ArrNotation | MapType) "{" (MapValue | ArrValue) "}" | Expression | "[" ArrValue "]";
 
 MapValue ::= BaseValue ":" Value ("," BaseValue ":" Value)*;
 
@@ -90,7 +90,7 @@ LogicValue ::= Boolean | ValueAccess;
 
 Comparison ::= MathItem Comparator MathItem;
 
-Comparator ::= \[=!><]"=" | ">" | "<";
+Comparator ::= [=!><]"=" | ">" | "<";
 
 MathItem ::= MathExpression | ValueAccess;
 
@@ -105,7 +105,7 @@ ArithmeticOp ::= "+" | "\" | "-" | "*" | "/" | "%";
 
 BaseValue ::= BaseConstValue | ValueAccess;
 
-ValueAccess ::= Identifier Properties? ("\[" BaseValue "]")*;
+ValueAccess ::= Identifier Properties? ("[" BaseValue "]")*;
 
 Properties ::= "." Identifier ("." Identifier)* ("." "(" Type ")")?;
 
@@ -153,3 +153,4 @@ Reassignment ::= ValueAccess (("=" | ExpAssign) Value | Increment);
 ExpAssign ::= "+=" | "\=" | "-=" | "*=" | "/=" | "%=";
 
 Increment ::= "++" | "--";
+```
