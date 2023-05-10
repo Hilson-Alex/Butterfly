@@ -118,7 +118,7 @@ typeNote: COLON typeDef {$$ = $2};
 
 typeDef: anyType arrNotation {$$ = $2 + getType($1)} | mapType {$$ = $1} ;
 
-anyType: TYPE {$$ = $1} | ANY {$$ = "interface{}"}
+anyType: TYPE {$$ = $1} | ANY {$$ = "interface{}"};
 
 arrNotation: /*empty*/ 									{$$ = ""}
 	| arrNotation OP_SQUARE UNSIGNED_NUMBER CL_SQUARE 	{$$ = concat($1,"[",$3,"]")};
