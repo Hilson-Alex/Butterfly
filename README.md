@@ -10,24 +10,27 @@ passing.
 
 *Butterfly image by me, [Hilson-Alex]*
 
+
 ## Getting Started
 
 By following these instructions you will get the working compiler on your computer. 
+
 
 ### Installing
 
 The easiest way to install the compiler, you just need to download the bf_installer.msi [here](https://github.com/Hilson-Alex/Butterfly/releases/tag/0.2.0). 
 When executed, the installer will install the executable, dependencies and do all setup needed.
 
-Another way to get the compiler working is downloading the source code and adding the path to the [/out] folder(./out) on the `Path`
-environment variable. It is important to not change the locations of the executable or the resource folder (and anything inside it),
-or the compiler may malfunction.
+Another way to get the compiler working is downloading the source code, adding the path to the [/out] folder(./out) on the `Path`
+environment variable an then compile the source code with the `-o ./out/butterfly.exe` flag. It is important to not change the locations 
+of the executable or the resource folder (and anything inside it), or the compiler may malfunction.
 
 > You can see a tutorial about configuring the environment variables [here.](https://www.c-sharpcorner.com/article/how-to-addedit-path-environment-variable-in-windows-11/)
 
+
 ### Using The Compiler
 
-The Butterfly compiler receive a directory with one or more *.bf* files inside.
+The Butterfly compiler receive a directory with one or more *.bf* files inside. 
 
 If you used the installer or added the [/out](./out) folder to the `Path` environment
 variable, then you can just use it like this: 
@@ -41,7 +44,7 @@ Or, alternatively, you can just specify the path to the executable as follows:
 ```shell
 path\to\butterfly.exe <flags> <folder_with_bf_files>
 ```
-> It's important to keep the compiler together side-by-side with the resources folder
+> As said before, it's important to keep the compiler together side-by-side with the resources folder
 > Otherwise it will break.
 
 All flags are optional. The valid flags are listed bellow.
@@ -53,6 +56,7 @@ All flags are optional. The valid flags are listed bellow.
   This is useful to understand the parser errors.
 - *-lexerVerbose*: Prints the parsed tokens while compiling. Used on debugging.
 - *-keepGeneratedFiles*: Keep the generated files after compiling. Used **ONLY** for debugging.
+
 
 ### Cloning and Building
 
@@ -81,9 +85,11 @@ And then you will have a `butterfly.exe` on the `out` folder, beside the src.
 
 You can setup the `Path` environment variable as instructed [above](#installing) if wanted
 
+
 ## Author
 
 - [Hilson A. W. Junior][Hilson-Alex] - *Initial work*
+
 
 ## License
 
