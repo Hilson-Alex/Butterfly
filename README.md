@@ -30,7 +30,8 @@ of the executable or the resource folder (and anything inside it), or the compil
 
 ### Using The Compiler
 
-The Butterfly compiler receive a directory with one or more *.bf* files inside. 
+The Butterfly compiler receive a directory with one or more *.bf* files inside. You can read the specification of the Butterfly Language 
+Grammar [here](./out/resources/doc/Grammar.md)
 
 If you used the installer or added the [/out](./out) folder to the `Path` environment
 variable, then you can just use it like this: 
