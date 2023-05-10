@@ -103,13 +103,19 @@ func GoCompile() error {
 		os.Environ(),
 		"GOROOT="+filepath.Join(resourceFolder, goRoot),
 	)
+	var args = []string{
+		"build",
+		"-C=" + filepath.Join(resourceFolder, butterflyEmbbed),
+		"-o=" + outputPath(),
+	}
+	if UseEventQueue {
+		args = append(args, "-tags=queue")
+	}
+	args = append(args, butterflyEmbbed)
 	return executeExternalEnv(
 		env,
 		goPath,
-		"build",
-		"-C="+filepath.Join(resourceFolder, butterflyEmbbed),
-		"-o="+outputPath(),
-		butterflyEmbbed,
+		args...,
 	)
 }
 
