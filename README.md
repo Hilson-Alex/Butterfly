@@ -41,14 +41,18 @@ Or, alternatively, you can just specify the path to the executable as follows:
 ```shell
 path\to\butterfly.exe <flags> <folder_with_bf_files>
 ```
+> It's important to keep the compiler together side-by-side with the resources folder
+> Otherwise it will break.
 
 All flags are optional. The valid flags are listed bellow.
 
 - *-help*: prints the usage and all valid flags
-- *-lexerVerbose*: Prints the parsed tokens while compiling. Used on debugging
+- *-out*: especify the path and the name where the executable will be generated.
+- *-useQueue*: Builds the executable with an embed event queue instead of immediate event share.
 - *-listTokens*: list all valid tokens. You also can read them [here](./out/resources/doc/Tokens.md).
   This is useful to understand the parser errors.
-- *-out*: (DRAFT) especify the path where the executable will be generated. 
+- *-lexerVerbose*: Prints the parsed tokens while compiling. Used on debugging.
+- *-keepGeneratedFiles*: Keep the generated files after compiling. Used **ONLY** for debugging.
 
 ### Cloning and Building
 
