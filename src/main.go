@@ -77,6 +77,7 @@ func parseAll(lexerResults [][]*lexer.Token) []parser.ParserResult {
 
 func generateAll(parserResults []parser.ParserResult) {
 	var failedFiles = make([]error, 0, len(parserResults))
+	bfio.CleanGeneratedFiles()
 	for _, result := range parserResults {
 		if err := bfio.GenerateGoFile(result.ModuleName, result.Result); err != nil {
 			failedFiles = append(failedFiles, err)

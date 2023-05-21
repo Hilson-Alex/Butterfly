@@ -31,8 +31,8 @@ type token interface {
 	FileName() string
 }
 
-// Parser is a facade to communicate to the goyacc generated file
-type Parser[T token] struct {
+// parser is a facade to communicate to the goyacc generated file
+type parser[T token] struct {
 	TokBuffer    []T
 	lastToken    T
 	success      bool
@@ -46,7 +46,7 @@ type ParserResult struct {
 }
 
 // Lex passes the next token to the goyacc generated parser
-func (lex *Parser[T]) Lex(lval *yySymType) int {
+func (lex *parser[T]) Lex(lval *yySymType) int {
 	if len(lex.TokBuffer) == EOF {
 		return EOF
 	}
@@ -62,14 +62,14 @@ func (lex *Parser[T]) Lex(lval *yySymType) int {
 }
 
 // Error logs any syntactic error
-func (lex *Parser[T]) Error(error string) {
+func (lex *parser[T]) Error(error string) {
 	lex.success = false
 	var lastToken = lex.lastToken
 	logger.Log(bfErrors.CreateSyntaxError(error, PrintToken(lastToken.TokenType()), lastToken))
 }
 
 func Parse[T token](lexer []T) ParserResult {
-	var parserInfo = &Parser[T]{TokBuffer: lexer, success: true, currentScope: new(checker.BFScope)}
+	var parserInfo = &parser[T]{TokBuffer: lexer, success: true, currentScope: new(checker.BFScope)}
 	yyParse(parserInfo)
 	return ParserResult{
 		ModuleName: parserInfo.currentScope.Module().Name(),
