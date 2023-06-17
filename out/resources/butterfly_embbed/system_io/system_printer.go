@@ -15,6 +15,9 @@ func init() {
 		default:
 			fmt.Println(value)
 		}
+		if event, ok := message["shares"]; ok {
+			runtime.BF__Dispatch(event.(string), runtime.BF__MessageCreate(moduleName, map[string]interface{}{}))
+		}
 	})
 	runtime.BF__EventSubscribe("Sys Printf", moduleName, func(message runtime.BF__MessageContent) {
 		var text string
@@ -27,5 +30,8 @@ func init() {
 			panic("Printf args are not an array!")
 		}
 		fmt.Printf(text, args...)
+		if event, ok := message["shares"]; ok {
+			runtime.BF__Dispatch(event.(string), runtime.BF__MessageCreate(moduleName, map[string]interface{}{}))
+		}
 	})
 }

@@ -10,9 +10,9 @@ import(
 
 %union{
 	content 		string
-	currentToken 	token
+//	currentToken 	token
 	parsed 			string
-	tokType			checker.BFType
+//	tokType			checker.BFType
 	scope 			*checker.BFScope
 	result			*string
 }
@@ -27,7 +27,7 @@ eventOrValuesDeclarations eventParameter messageContent commands optElse
 optReassign mapValue commandBlock command loop for while doWhile whileClause
 forAssign reassignment optReassign updateValue ifStatement eventShare
 eventName messageParameter messageValue switchStatement cases case caseValue
-messageDeclaration messageItem itemValue anyType identifyerOrType
+messageDeclaration messageItem itemValue anyType optTypeCoercion
 compoundValue
 moduleBody
 
@@ -61,7 +61,7 @@ IDENTIFIER
 
 module: MODULE IDENTIFIER { createModule($<scope>2, $2) } moduleBody {
 	saveModule($4, $<result>1)
-};
+} | error;
 
 moduleBody:
 	OP_CURLY
@@ -180,14 +180,14 @@ baseValue: baseConstValue 	{$$ = $1}
 
 valueAccess: IDENTIFIER addrOrProperty {$$ = concat($1,$2)};
 
-addrOrProperty: varAddr 	{$$ = $1}
-	| properties varAddr	{$$ = $1 + $2};
+addrOrProperty: varAddr 					{$$ = $1}
+	| properties optTypeCoercion varAddr	{$$ = concat($1,$2,$3)};
+
+optTypeCoercion: /* empty*/ {$$ = ""}
+	| DOT OP_PARENT typeDef CL_PARENT {$$ = concat(".(",getType($3),")")};
 
 properties: DOT IDENTIFIER {$$ = concat("[\"",$2,"\"]")}
-	| properties DOT identifyerOrType {$$ = concat($1,".(map[string]interface{})",$3)};
-
-identifyerOrType: IDENTIFIER {$$ = concat("[\"",$1,"\"]")}
-	| OP_PARENT TYPE CL_PARENT {$$ = concat("(",getType($2),")")}
+	| properties DOT IDENTIFIER {$$ = concat($1,".(map[string]interface{})", concat("[\"",$3,"\"]"))};
 
 varAddr: /*empty*/ {$$ = ""}
 	| varAddr OP_SQUARE baseValue CL_SQUARE

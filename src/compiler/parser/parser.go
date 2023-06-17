@@ -16,8 +16,8 @@ func init() {
 // Logger for errors when parsing the syntax.
 var logger = bfErrors.NewBfErrLogger("SYNTAX ERROR:")
 
-var PrintToken = func(code int) string {
-	return TokenName(code)
+var PrintToken = func(tokCategory string) string {
+	return tokCategory
 }
 
 // token interface breaks the lexer dependency, so there's no circular
@@ -33,7 +33,7 @@ type token interface {
 
 // parser is a facade to communicate to the goyacc generated file
 type parser[T token] struct {
-	TokBuffer    []T
+	tokBuffer    []T
 	lastToken    T
 	success      bool
 	currentScope *checker.BFScope
@@ -47,17 +47,16 @@ type ParserResult struct {
 
 // Lex passes the next token to the goyacc generated parser
 func (lex *parser[T]) Lex(lval *yySymType) int {
-	if len(lex.TokBuffer) == EOF {
+	if len(lex.tokBuffer) == EOF {
 		return EOF
 	}
-	var currentToken = lex.TokBuffer[0]
+	var currentToken = lex.tokBuffer[0]
 	lex.lastToken = currentToken
 	lval.yys = currentToken.TokenType()
 	lval.content = currentToken.Value()
-	lval.currentToken = currentToken
 	lval.scope = lex.currentScope
 	lval.result = &lex.result
-	lex.TokBuffer = lex.TokBuffer[1:]
+	lex.tokBuffer = lex.tokBuffer[1:]
 	return lval.yys
 }
 
@@ -65,11 +64,13 @@ func (lex *parser[T]) Lex(lval *yySymType) int {
 func (lex *parser[T]) Error(error string) {
 	lex.success = false
 	var lastToken = lex.lastToken
-	logger.Log(bfErrors.CreateSyntaxError(error, PrintToken(lastToken.TokenType()), lastToken))
+	if len(lex.tokBuffer) != 0 {
+		logger.Log(bfErrors.CreateSyntaxError(error, TokenName(lastToken.TokenType()), lastToken, PrintToken))
+	}
 }
 
 func Parse[T token](lexer []T) ParserResult {
-	var parserInfo = &parser[T]{TokBuffer: lexer, success: true, currentScope: new(checker.BFScope)}
+	var parserInfo = &parser[T]{tokBuffer: lexer, success: true, currentScope: checker.RootScope("")}
 	yyParse(parserInfo)
 	return ParserResult{
 		ModuleName: parserInfo.currentScope.Module().Name(),

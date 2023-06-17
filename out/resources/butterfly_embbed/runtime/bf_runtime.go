@@ -26,7 +26,6 @@ func BF__EventSubscribe(event, module string, callback __bfCallback) {
 }
 
 func BF__Dispatch(event string, message BF__MessageInfo) {
-	message.EventName = event
 	var responses, present = __eventsRegisteredResponses[event]
 	if !present {
 		fmt.Printf("No responses for event %q\n", event)

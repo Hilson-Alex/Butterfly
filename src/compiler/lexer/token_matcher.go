@@ -55,13 +55,13 @@ const (
 	increment  = "[+]{2}|--"
 	not        = "!"
 	logic      = "&&|[|]{2}"
-	arithmetic = "[+\\-*/%]"
+	arithmetic = "[+\\\\\\-*/%]"
 	comparator = "[=!><]=|>|<"
 	assign     = "="
 	expAssign  = arithmetic + "="
 	comma      = ","
 	colon      = ":"
-	dot        = "\\.\\b"
+	dot        = "\\."
 
 	// Groupers
 	openCurly        = "\\{"

@@ -7,10 +7,6 @@ import (
 	"sync"
 )
 
-func init() {
-	fmt.Println("EVENT QUEUE ENABLED")
-}
-
 type __bfChannel map[string][]__bfResponse
 
 type __bfCallback func(content BF__MessageContent)
@@ -51,12 +47,8 @@ func BF__Run() {
 
 func __runEvent() {
 	var message = __eventQueue.arr[0]
+	__eventQueue.arr = __eventQueue.arr[1:]
 	var event = message.EventName
-	defer func() {
-		__eventQueue.mutex.Lock()
-		__eventQueue.arr = __eventQueue.arr[1:]
-		__eventQueue.mutex.Unlock()
-	}()
 	var responses, present = __eventsRegisteredResponses[event]
 	if !present {
 		fmt.Printf("No responses for event %q\n", event)
