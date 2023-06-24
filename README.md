@@ -18,7 +18,7 @@ By following these instructions you will get the working compiler on your comput
 
 ### Installing
 
-The easiest way to install the compiler, you just need to download the bf_installer.msi [here](https://github.com/Hilson-Alex/Butterfly/releases/tag/0.4.0). 
+The easiest way to install the compiler, you just need to download the last version of the bf_installer.msi [here][latest-tag]. 
 When executed, the installer will install the executable, dependencies and do all setup needed.
 
 Another way to get the compiler working is downloading the source code, adding the path to the [/out] folder(./out) on the `Path`
@@ -97,3 +97,4 @@ You can setup the `Path` environment variable as instructed [above](#installing)
 This project is under the BSD 3-Clause License - for more info read the [LICENSE](LICENSE) file
 
 [Hilson-Alex]: https://github.com/Hilson-Alex
+[latest-tag]: https://github.com/Hilson-Alex/Butterfly/releases/tag/0.4.1
