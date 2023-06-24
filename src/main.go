@@ -62,6 +62,9 @@ func parseAll(lexerResults [][]*lexer.Token) []parser.ParserResult {
 	var failed = false
 	var results = make([]parser.ParserResult, 0, len(lexerResults))
 	for _, tokens := range lexerResults {
+		if len(tokens) == 0 {
+			continue
+		}
 		var parserResult = parser.Parse(tokens)
 		if !parserResult.Success {
 			failed = true

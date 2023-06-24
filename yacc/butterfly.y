@@ -258,7 +258,7 @@ forAssign: LET IDENTIFIER ASSIGN value {$$ = wsJoin($2,":=",$4)}
 while: whileClause commandBlock {$$ = wsJoin("for",$1,$2)};
 
 doWhile: DO commandBlock whileClause DELIMITER {
-	$$ = concat("for {",$2," if ",$3," { break }}")
+	$$ = concat("for {",$2," if !(",$3,") { break }}")
 };
 
 whileClause: WHILE OP_PARENT logicOrComparison CL_PARENT {$$ = $3};

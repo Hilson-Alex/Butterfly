@@ -16,7 +16,9 @@ import (
 type yySymType struct {
 	yys     int
 	content string
+	//	currentToken 	token
 	parsed string
+	//	tokType			checker.BFType
 	scope  *checker.BFScope
 	result *string
 }
@@ -1347,7 +1349,7 @@ yydefault:
 		yyDollar = yyS[yypt-4 : yypt+1]
 //line ../yacc/butterfly.y:260
 		{
-			yyVAL.parsed = concat("for {", yyDollar[2].parsed, " if ", yyDollar[3].parsed, " { break }}")
+			yyVAL.parsed = concat("for {", yyDollar[2].parsed, " if !(", yyDollar[3].parsed, ") { break }}")
 		}
 	case 113:
 		yyDollar = yyS[yypt-4 : yypt+1]
