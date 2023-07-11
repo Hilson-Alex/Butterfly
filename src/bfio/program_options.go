@@ -8,7 +8,7 @@ import (
 
 var OutputPath string
 
-var UseEventQueue bool
+var RuntimeMode string
 
 var ListTokens bool
 
@@ -20,7 +20,7 @@ var CompileDir string
 
 func init() {
 	flag.StringVar(&OutputPath, "out", "", "Gives a custom path to the generated exe")
-	flag.BoolVar(&UseEventQueue, "useQueue", false, "Builds the executable with an embed event queue instead of immediate event share")
+	flag.StringVar(&RuntimeMode, "runtime", "default", "Changes which runtime will be embedded to the executable")
 	flag.BoolVar(&ListTokens, "listTokens", false, "List all language tokens and their use. Useful to understand syntax errors")
 	flag.BoolVar(&LexerVerbose, "lexerVerbose", false, "Prints the parsed Tokens while compiling")
 	flag.BoolVar(&KeepGenFiles, "keepGeneratedFiles", false, "Don't delete the generated files after compiling")

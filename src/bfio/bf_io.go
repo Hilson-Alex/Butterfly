@@ -21,8 +21,8 @@ const (
 	goRoot             = "go_compiler"
 	goInternalCompiler = "go_compiler/bin/go.exe"
 	goFmtInternal      = "go_compiler/bin/gofmt.exe"
-	butterflyEmbbed    = "butterfly_embbed"
-	generatedFolder    = "butterfly_embbed/generated_code/"
+	butterflyEmbed     = "butterfly_embed"
+	generatedFolder    = "butterfly_embed/generated_code/"
 	generatedDocFile   = "bf_____generated.go"
 )
 
@@ -32,16 +32,16 @@ func ReadCompileDir() (entries []os.DirEntry, err error) {
 		return
 	}
 	entries, err = os.ReadDir(CompileDir)
-	if err != nil {
-		if errors.Is(err, syscall.ENOTDIR) {
-			var errMsg = "could not open the specified path as an folder. Are you sure it is a directory?"
-			err = bfErrors.CreateNestedErr(errMsg, err)
-			return
-		}
-		err = bfErrors.CreateNestedErr("can't open directory", err)
+	if err == nil {
+		entries = filterEntries(entries)
 		return
 	}
-	entries = filterEntries(entries)
+	if errors.Is(err, syscall.ENOTDIR) {
+		var errMsg = "could not open the specified path as an folder. Are you sure it is a directory?"
+		err = bfErrors.CreateNestedErr(errMsg, err)
+		return
+	}
+	err = bfErrors.CreateNestedErr("can't open directory", err)
 	return
 }
 
@@ -84,7 +84,11 @@ func GenerateGoFile(filename, content string) error {
 	if err != nil {
 		return err
 	}
-	generated, err := os.Create(filepath.Join(resourceFolder, generatedFolder, filename+".go"))
+	var tempFile = filepath.Join(resourceFolder, generatedFolder, filename+".go")
+	if _, err = os.Stat(tempFile); err == nil {
+		return errors.New("Module" + filename + "declared multiple times")
+	}
+	generated, err := os.Create(tempFile)
 	defer QuietClose(generated)
 	if err != nil {
 		return err
@@ -99,19 +103,7 @@ func GoCompile() error {
 		return err
 	}
 	var goPath = filepath.Join(resourceFolder, goInternalCompiler)
-	var env = append(
-		os.Environ(),
-		"GOROOT="+filepath.Join(resourceFolder, goRoot),
-	)
-	var args = []string{
-		"build",
-		"-C=" + filepath.Join(resourceFolder, butterflyEmbbed),
-		"-o=" + outputPath(),
-	}
-	if UseEventQueue {
-		args = append(args, "-tags=queue")
-	}
-	args = append(args, butterflyEmbbed)
+	var env, args = compilerSetup(resourceFolder)
 	return executeExternalEnv(
 		env,
 		goPath,
@@ -137,6 +129,21 @@ func CleanGeneratedFiles() {
 			_ = os.Remove(filepath.Join(resourceFolder, generatedFolder, file.Name()))
 		}
 	}
+}
+
+func compilerSetup(baseFolder string) (env, args []string) {
+	env = append(
+		os.Environ(),
+		"GOROOT="+filepath.Join(baseFolder, goRoot),
+	)
+	args = []string{
+		"build",
+		"-C=" + filepath.Join(baseFolder, butterflyEmbed),
+		"-o=" + outputPath(),
+		"-tags=" + RuntimeMode,
+		butterflyEmbed,
+	}
+	return
 }
 
 func executeExternal(path string, arg ...string) error {

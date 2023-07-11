@@ -11,7 +11,7 @@ func saveModule(code string, result *string) {
 package generated_code
 
 import (
-	"butterfly_embbed/runtime"
+	"butterfly_embed/runtime"
 )
 
 func init() {
