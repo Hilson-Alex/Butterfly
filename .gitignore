@@ -10,10 +10,6 @@
 .idea
 /test-programs
 
-# generated code
-/out/resources/butterfly_embed/generated_code/*.go
-!/out/resources/butterfly_embed/generated_code/bf_____generated.go
-
 # executable
 bf_installer.msi
 /out/butterfly.exe
