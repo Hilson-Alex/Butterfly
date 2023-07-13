@@ -4,6 +4,9 @@ Butterfly is an experimental programming language with an event-driven perspecti
 default. The Butterfly language is based on modules that communicate exclusively through events and asynchronous message 
 passing.
 
+You can find some commented code examples to know more about the language reading [this doc](./out/resources/doc/CodeExample.md)
+
+
 <a href="https://drive.google.com/uc?export=view&id=1vI3_UjFAzELrp2uUPGPjE3CK-NpqgJeN">
   <img src="https://drive.google.com/uc?export=view&id=1vI3_UjFAzELrp2uUPGPjE3CK-NpqgJeN" style="width: 650px; max-width: 100%; height: auto"  alt="a Butter Flying"/>
 </a>
@@ -51,8 +54,8 @@ path\to\butterfly.exe <flags> <folder_with_bf_files>
 All flags are optional. The valid flags are listed bellow.
 
 - *-help*: prints the usage and all valid flags
-- *-out*: especify the path and the name where the executable will be generated.
-- *-useQueue*: Builds the executable with an embed event queue instead of immediate event share.
+- *-out*: specify the path and the name where the executable will be generated.
+- *-runtime*: changes which runtime will be embedded to the executable.
 - *-listTokens*: list all valid tokens. You also can read them [here](./out/resources/doc/Tokens.md).
   This is useful to understand the parser errors.
 - *-lexerVerbose*: Prints the parsed tokens while compiling. Used on debugging.
