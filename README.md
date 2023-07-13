@@ -69,13 +69,13 @@ To get the repository running locally on your machine you will need to install t
 You can clone the project by running
 
 ```shell
-git clone git@github.com:Hilson-Alex/Butterfly.git
+git clone --recursive git@github.com:Hilson-Alex/Butterfly.git
 ```
 
 or, if you can't use ssh
 
 ```shell
-git clone https://github.com/Hilson-Alex/Butterfly.git
+git clone --recursive https://github.com/Hilson-Alex/Butterfly.git
 ```
 
 Next, open the project folder and run
