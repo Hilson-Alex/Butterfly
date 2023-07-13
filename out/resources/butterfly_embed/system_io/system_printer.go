@@ -3,7 +3,7 @@ package system_io
 import (
 	"fmt"
 
-	"butterfly_embbed/runtime"
+	"butterfly_embed/runtime"
 )
 
 func init() {

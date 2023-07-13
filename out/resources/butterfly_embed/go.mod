@@ -1,3 +1,3 @@
-module butterfly_embbed
+module butterfly_embed
 
 go 1.20

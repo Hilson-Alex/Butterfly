@@ -3,13 +3,13 @@ package main
 import (
 	"os"
 
-	"butterfly_embbed/runtime"
+	"butterfly_embed/runtime"
 )
 
 // silent needed imports
 import (
-	_ "butterfly_embbed/generated_code"
-	_ "butterfly_embbed/system_io"
+	_ "butterfly_embed/generated_code"
+	_ "butterfly_embed/system_io"
 )
 
 func main() {
