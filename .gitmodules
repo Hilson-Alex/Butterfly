@@ -1,0 +1,3 @@
+[submodule "out/resources/butterfly_embed"]
+	path = out/resources/butterfly_embed
+	url = ./out/resources/butterfly_embed
