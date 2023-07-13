@@ -1,4 +1,4 @@
 
 [submodule "out/resources/butterfly_embed"]
 	path = out/resources/butterfly_embed
-	url = git@github.com:Hilson-Alex/butterfly_embed.git
+	url = https://github.com/Hilson-Alex/butterfly_embed.git
