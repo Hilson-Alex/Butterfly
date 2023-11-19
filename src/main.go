@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -15,28 +16,37 @@ import (
 
 var generalLogger = bfErrors.NewBfErrLogger("ERROR:")
 
+// aliases
+type lexerList = [][]*lexer.Token
+type parserList = []parser.ParserResult
+
 func main() {
 	if bfio.ListTokens {
-		listTokens()
+		bfErrors.Run(bfio.PrintTokenList).OrPanicOn(generalLogger)
 		return
 	}
-	var entries, err = bfio.ReadCompileDir()
-	if err != nil {
-		generalLogger.Panic(err)
-	}
-
+	var entries = bfErrors.Resolve(bfio.ReadCompileDir).OrPanicOn(generalLogger)
 	compileAll(entries)
 }
 
 func compileAll(entries []os.DirEntry) {
-	var lexerResults = lexAll(entries)
-	var parseResults = parseAll(lexerResults)
-	generateAll(parseResults)
+
+	var lexerResults = bfErrors.
+		Resolve(func() (lexerList, error) { return lexAll(entries) }).
+		OrPanicOn(generalLogger)
+
+	var parseResults = bfErrors.
+		Resolve(func() (parserList, error) { return parseAll(lexerResults) }).
+		OrPanicOn(generalLogger)
+
+	bfErrors.
+		Run(func() error { return generateAll(parseResults) }).
+		OrPanicOn(generalLogger)
 }
 
-func lexAll(entries []os.DirEntry) [][]*lexer.Token {
+func lexAll(entries []os.DirEntry) (lexerList, error) {
 	var failedLexers = make([]error, 0, len(entries))
-	var parsedTokens = make([][]*lexer.Token, 0, len(entries))
+	var parsedTokens = make(lexerList, 0, len(entries))
 	for _, entry := range entries {
 		bfio.HandleFile(filepath.Join(bfio.CompileDir, entry.Name()), func(file *os.File) {
 			var tokens, err = lexer.MatchAllTokens(file)
@@ -53,13 +63,13 @@ func lexAll(entries []os.DirEntry) [][]*lexer.Token {
 		})
 	}
 	if len(failedLexers) > 0 {
-		generalLogger.Panic(bfErrors.CreateNestedErr("lexical analysis failed", failedLexers...))
+		return nil, bfErrors.CreateNestedErr("lexical analysis failed", failedLexers...)
 	}
-	return parsedTokens
+	return parsedTokens, nil
 }
 
-func parseAll(lexerResults [][]*lexer.Token) []parser.ParserResult {
-	var failed = false
+func parseAll(lexerResults lexerList) ([]parser.ParserResult, error) {
+	var failedParsers = make([]error, 0, len(lexerResults))
 	var results = make([]parser.ParserResult, 0, len(lexerResults))
 	for _, tokens := range lexerResults {
 		if len(tokens) == 0 {
@@ -67,41 +77,36 @@ func parseAll(lexerResults [][]*lexer.Token) []parser.ParserResult {
 		}
 		var parserResult = parser.Parse(tokens)
 		if !parserResult.Success {
-			failed = true
-			continue
+			failedParsers = append(failedParsers, errors.New("found syntax errorrs on file "+tokens[0].FileName()))
 		}
 		results = append(results, parserResult)
 	}
-	if failed {
-		generalLogger.Panic("syntax analysis failed")
+	if len(failedParsers) > 0 {
+		return nil, bfErrors.CreateNestedErr("syntax analysis failed", failedParsers...)
 	}
-	return results
+	return results, nil
 }
 
-func generateAll(parserResults []parser.ParserResult) {
+func generateAll(parserResults []parser.ParserResult) error {
 	var failedFiles = make([]error, 0, len(parserResults))
 	bfio.CleanGeneratedFiles()
 	for _, result := range parserResults {
-		if err := bfio.GenerateGoFile(result.ModuleName, result.Result); err != nil {
-			failedFiles = append(failedFiles, err)
-		}
+		bfErrors.
+			Run(func() error { return bfio.GenerateGoFile(result.ModuleName, result.Result) }).
+			AndHandle(func(err error) { failedFiles = append(failedFiles, err) })
 	}
+
 	if len(failedFiles) > 0 {
-		generalLogger.Panic(bfErrors.CreateNestedErr("error generating files", failedFiles...))
+		return bfErrors.CreateNestedErr("error generating files", failedFiles...)
 	}
+
 	if err := bfio.GoCompile(); err != nil {
-		generalLogger.Panic(bfErrors.CreateNestedErr("error generating executable", err))
+		return bfErrors.CreateNestedErr("error generating executable", err)
 	}
 	if !bfio.KeepGenFiles {
 		bfio.CleanGeneratedFiles()
-		return
+		return nil
 	}
 	_ = bfio.GoFmtGenerated()
-}
-
-func listTokens() {
-	err := bfio.PrintTokenList()
-	if err != nil {
-		generalLogger.Panic(err.Error())
-	}
+	return nil
 }

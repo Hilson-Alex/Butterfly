@@ -8,6 +8,7 @@
 # Dependency directories (remove the comment below to include it)
 *.output
 .idea
+.vscode
 /test-programs
 
 # executable

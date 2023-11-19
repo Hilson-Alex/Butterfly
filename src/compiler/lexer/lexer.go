@@ -50,6 +50,18 @@ func newLexer(file fs.File) (*lexer, error) {
 	}, nil
 }
 
+func safeRead(reader *bufio.Reader) (string, bool) {
+	var EOF = false
+	var text = bfErrors.Resolve(func() (string, error) { return reader.ReadString('\n') }).
+		AndHandle(func(err error) {
+			if err != io.EOF {
+				logger.Panic(err)
+			}
+			EOF = true
+		})
+	return text, EOF
+}
+
 // parse gets all valid tokens from the lexer reader.
 // if an unknown token is found, it logs the occurrence
 // and continue the parsing.
@@ -58,10 +70,8 @@ func (lexer *lexer) parse() ([]*Token, error) {
 	var tokens = make([]*Token, 0)
 	var hasError = false
 	var err error
-	for lexer.currentLine, err = reader.ReadString('\n'); ; lexer.currentLine, err = reader.ReadString('\n') {
-		if err != nil && err != io.EOF {
-			logger.Panic(err)
-		}
+	var EOF = false
+	for lexer.currentLine, EOF = safeRead(reader); ; lexer.currentLine, EOF = safeRead(reader) {
 		for lexer.currentLine != "" {
 			if lexer.skippedText() {
 				continue
@@ -74,7 +84,7 @@ func (lexer *lexer) parse() ([]*Token, error) {
 			lexer.logError()
 		}
 		lexer.column = 1
-		if err == io.EOF {
+		if EOF {
 			break
 		}
 	}
