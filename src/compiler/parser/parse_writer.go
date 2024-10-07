@@ -89,21 +89,24 @@ func updateScope(old *checker.BFScope, new *checker.BFScope) {
 	*old = *new
 }
 
-// func addVar(scope *checker.BFScope, name, varType, value string) {
-// 	// var bfType checker.BFType = checker.BFPrimitive(varType)
-// 	// if varType == "" {
-// 	// 	bfType, _ = checker.DefaultType(value)
-// 	// }
-// 	// _ = scope.AddSymbol(checker.CreateConst(name, bfType))
-// 	checker.CreateVar(name, checker.TEXT)
-// }
-//
-// func addConst(scope *checker.BFScope, name, value, varType string) {
-// 	var bfType checker.BFType = checker.BFPrimitive(varType)
-// 	if bfType == checker.UNKNOWN {
-// 		bfType, _ = checker.DefaultType(value)
-// 	} else if err := bfType.CheckAssign(value); err != nil {
-// 		return
-// 	}
-// 	_ = scope.AddSymbol(checker.CreateConst(name, bfType))
-// }
+func addVar(scope *checker.BFScope, name, varType, value string) {
+	var bfType checker.BFType = checker.BFPrimitive(varType)
+	if bfType == checker.UNKNOWN {
+		bfType = checker.ANY
+		// bfType, _ = checker.DefaultType(value)
+	} else if !bfType.CanAssign(value, scope) {
+		return
+	}
+	var _ = scope.AddSymbol(checker.CreateVar(name, bfType))
+}
+
+func addConst(scope *checker.BFScope, name, value, varType string) {
+	var bfType checker.BFType = checker.BFPrimitive(varType)
+	if bfType == checker.UNKNOWN {
+		bfType = checker.ANY
+		// bfType, _ = checker.DefaultType(value)
+	} else if !bfType.CanAssign(value, scope) {
+		return
+	}
+	_ = scope.AddSymbol(checker.CreateConst(name, bfType))
+}

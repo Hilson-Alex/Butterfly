@@ -760,7 +760,7 @@ yydefault:
 		yyDollar = yyS[yypt-5 : yypt+1]
 //line ../yacc/butterfly.y:91
 		{
-			//	addConst($<scope>$,$2,$5,$3)
+			addConst(yyVAL.scope, yyDollar[2].content, yyDollar[5].parsed, yyDollar[3].parsed)
 			yyVAL.parsed = wsJoin(yyDollar[1].content, yyDollar[2].content, yyDollar[3].parsed, yyDollar[4].content, yyDollar[5].parsed)
 		}
 	case 15:
@@ -1133,7 +1133,7 @@ yydefault:
 		yyDollar = yyS[yypt-4 : yypt+1]
 //line ../yacc/butterfly.y:194
 		{
-			yyVAL.parsed = concat(yyDollar[1].parsed, "[", yyDollar[3].parsed, "])")
+			yyVAL.parsed = concat(yyDollar[1].parsed, "[", yyDollar[3].parsed, "]")
 		}
 	case 77:
 		yyDollar = yyS[yypt-6 : yypt+1]
@@ -1349,7 +1349,7 @@ yydefault:
 		yyDollar = yyS[yypt-4 : yypt+1]
 //line ../yacc/butterfly.y:260
 		{
-			yyVAL.parsed = concat("for {", yyDollar[2].parsed, " if !(", yyDollar[3].parsed, ") { break }}")
+			yyVAL.parsed = concat("for {", yyDollar[2].parsed, "; if !(", yyDollar[3].parsed, ") { break }}")
 		}
 	case 113:
 		yyDollar = yyS[yypt-4 : yypt+1]

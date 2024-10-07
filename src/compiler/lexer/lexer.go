@@ -9,6 +9,7 @@ import (
 
 	"github.com/Hilson-Alex/Butterfly/src/bfio"
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
+	errcall "github.com/Hilson-Alex/calldef/src/err_call"
 )
 
 // Logger for errors when parsing a token.
@@ -52,10 +53,10 @@ func newLexer(file fs.File) (*lexer, error) {
 
 func safeRead(reader *bufio.Reader) (string, bool) {
 	var EOF = false
-	var text = bfErrors.Resolve(func() (string, error) { return reader.ReadString('\n') }).
-		AndHandle(func(err error) {
+	var text = errcall.Supply(func() (string, error) { return reader.ReadString('\n') }).
+		OrHandle(func(err error) {
 			if err != io.EOF {
-				logger.Panic(err)
+				logger.Panicln(err)
 			}
 			EOF = true
 		})
@@ -69,7 +70,7 @@ func (lexer *lexer) parse() ([]*Token, error) {
 	var reader = lexer.reader
 	var tokens = make([]*Token, 0)
 	var hasError = false
-	var err error
+	var err error = nil
 	var EOF = false
 	for lexer.currentLine, EOF = safeRead(reader); ; lexer.currentLine, EOF = safeRead(reader) {
 		for lexer.currentLine != "" {
@@ -88,7 +89,6 @@ func (lexer *lexer) parse() ([]*Token, error) {
 			break
 		}
 	}
-	err = nil
 	if hasError {
 		err = errors.New("found unknown tokens for file " + lexer.fileName)
 	}
@@ -137,7 +137,7 @@ func (lexer *lexer) logError() {
 	var text, line, column = lexer.currentLine, lexer.line, lexer.column
 	var invalidToken = getUnknownToken(text)
 	var offset = len(invalidToken)
-	logger.Log(&bfErrors.TokenError{
+	logger.Println(&bfErrors.TokenError{
 		Line:     line,
 		Column:   column,
 		Offset:   offset,

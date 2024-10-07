@@ -89,7 +89,7 @@ eventOrValuesDeclaration: declaration {$$ = $1}
 // Consts
 
 constDeclaration: CONST IDENTIFIER constType ASSIGN baseConstValue {
-//	addConst($<scope>$,$2,$5,$3)
+	addConst($<scope>$,$2,$5,$3)
 	$$ = wsJoin($1,$2,$3,$4,$5)
 };
 
@@ -135,6 +135,7 @@ compoundValue: mapValue {$$ = $1} | arrValue {$$ = $1};
 
 mapValue: baseValue COLON value 			{$$ = concat($1,":",$3)}
 	| mapValue COMMA baseValue COLON value	{$$ = concat($1,", ",$3,":",$5)};
+	| mapValue COMMA 						{$$ = $1}
 
 arrValue: /*empty*/ {$$ = ""}
 	| value {$$ = $1}
@@ -191,7 +192,7 @@ properties: DOT IDENTIFIER {$$ = concat("[\"",$2,"\"]")}
 
 varAddr: /*empty*/ {$$ = ""}
 	| varAddr OP_SQUARE baseValue CL_SQUARE
-	{$$ = concat($1,"[",$3,"])")};
+	{$$ = concat($1,"[",$3,"]")};
 
 // Events
 
@@ -258,7 +259,7 @@ forAssign: LET IDENTIFIER ASSIGN value {$$ = wsJoin($2,":=",$4)}
 while: whileClause commandBlock {$$ = wsJoin("for",$1,$2)};
 
 doWhile: DO commandBlock whileClause DELIMITER {
-	$$ = concat("for {",$2," if !(",$3,") { break }}")
+	$$ = concat("for {",$2,"; if !(",$3,") { break }}")
 };
 
 whileClause: WHILE OP_PARENT logicOrComparison CL_PARENT {$$ = $3};

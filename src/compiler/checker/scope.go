@@ -18,7 +18,7 @@ func RootScope(moduleName string) *BFScope {
 }
 
 func (scope *BFScope) AddSymbol(symbol *Symbol) error {
-	if _, ok := scope.symbolTable[symbol.Name()]; ok {
+	if _, exist := scope.symbolTable[symbol.Name()]; exist {
 		return errors.New("already declared in this scope")
 	}
 	scope.symbolTable[symbol.Name()] = symbol
@@ -37,14 +37,14 @@ func (scope *BFScope) Close() *BFScope {
 	return scope.parentScope
 }
 
-func (scope *BFScope) HasSymbol(symbolName string) bool {
-	if _, ok := scope.symbolTable[symbolName]; ok {
-		return true
+func (scope *BFScope) GetSymbol(symbolName string) *Symbol {
+	if item, ok := scope.symbolTable[symbolName]; ok {
+		return item
 	}
 	if scope.parentScope == nil {
-		return false
+		return nil
 	}
-	return scope.parentScope.HasSymbol(symbolName)
+	return scope.parentScope.GetSymbol(symbolName)
 }
 
 func (scope *BFScope) Module() *Symbol {

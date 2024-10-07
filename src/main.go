@@ -12,6 +12,7 @@ import (
 	"github.com/Hilson-Alex/Butterfly/src/compiler/lexer"
 	"github.com/Hilson-Alex/Butterfly/src/compiler/parser"
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
+	errcall "github.com/Hilson-Alex/calldef/src/err_call"
 )
 
 var generalLogger = bfErrors.NewBfErrLogger("ERROR:")
@@ -22,25 +23,24 @@ type parserList = []parser.ParserResult
 
 func main() {
 	if bfio.ListTokens {
-		bfErrors.Run(bfio.PrintTokenList).OrPanicOn(generalLogger)
+		errcall.Run(bfio.PrintTokenList).OrPanicOn(generalLogger)
 		return
 	}
-	var entries = bfErrors.Resolve(bfio.ReadCompileDir).OrPanicOn(generalLogger)
+	var entries = errcall.Supply(bfio.ReadCompileDir).OrPanicOn(generalLogger)
 	compileAll(entries)
 }
 
 func compileAll(entries []os.DirEntry) {
-
-	var lexerResults = bfErrors.
-		Resolve(func() (lexerList, error) { return lexAll(entries) }).
+	var lexerResults = errcall.
+		Function(lexAll)(entries).
 		OrPanicOn(generalLogger)
 
-	var parseResults = bfErrors.
-		Resolve(func() (parserList, error) { return parseAll(lexerResults) }).
+	var parseResults = errcall.
+		Function(parseAll)(lexerResults).
 		OrPanicOn(generalLogger)
 
-	bfErrors.
-		Run(func() error { return generateAll(parseResults) }).
+	errcall.
+		Consume(generateAll)(parseResults).
 		OrPanicOn(generalLogger)
 }
 
@@ -49,10 +49,10 @@ func lexAll(entries []os.DirEntry) (lexerList, error) {
 	var parsedTokens = make(lexerList, 0, len(entries))
 	for _, entry := range entries {
 		bfio.HandleFile(filepath.Join(bfio.CompileDir, entry.Name()), func(file *os.File) {
-			var tokens, err = lexer.MatchAllTokens(file)
-			if err != nil {
-				failedLexers = append(failedLexers, err)
-			}
+			var tokens = errcall.
+				Supply(func() ([]*lexer.Token, error) { return lexer.MatchAllTokens(file) }).
+				OrHandle(func(err error) { failedLexers = append(failedLexers, err) })
+
 			parsedTokens = append(parsedTokens, tokens)
 			if bfio.LexerVerbose {
 				fmt.Printf("\n%s\n\n", entry.Name())
@@ -77,7 +77,10 @@ func parseAll(lexerResults lexerList) ([]parser.ParserResult, error) {
 		}
 		var parserResult = parser.Parse(tokens)
 		if !parserResult.Success {
-			failedParsers = append(failedParsers, errors.New("found syntax errorrs on file "+tokens[0].FileName()))
+			failedParsers = append(
+				failedParsers,
+				errors.New("found syntax errorrs on file "+tokens[0].FileName()),
+			)
 		}
 		results = append(results, parserResult)
 	}
@@ -91,9 +94,9 @@ func generateAll(parserResults []parser.ParserResult) error {
 	var failedFiles = make([]error, 0, len(parserResults))
 	bfio.CleanGeneratedFiles()
 	for _, result := range parserResults {
-		bfErrors.
+		errcall.
 			Run(func() error { return bfio.GenerateGoFile(result.ModuleName, result.Result) }).
-			AndHandle(func(err error) { failedFiles = append(failedFiles, err) })
+			OrHandle(func(err error) { failedFiles = append(failedFiles, err) })
 	}
 
 	if len(failedFiles) > 0 {
@@ -107,6 +110,6 @@ func generateAll(parserResults []parser.ParserResult) error {
 		bfio.CleanGeneratedFiles()
 		return nil
 	}
-	_ = bfio.GoFmtGenerated()
+	errcall.Run(bfio.GoFmtGenerated).OrLogOn(generalLogger)
 	return nil
 }

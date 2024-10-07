@@ -65,7 +65,7 @@ func (lex *parser[T]) Error(error string) {
 	lex.success = false
 	var lastToken = lex.lastToken
 	if len(lex.tokBuffer) != 0 {
-		logger.Log(bfErrors.CreateSyntaxError(error, TokenName(lastToken.TokenType()), lastToken, PrintToken))
+		logger.Println(bfErrors.CreateSyntaxError(error, TokenName(lastToken.TokenType()), lastToken, PrintToken))
 	}
 }
 

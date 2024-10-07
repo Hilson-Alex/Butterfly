@@ -19,18 +19,25 @@ type BfErrLogger struct {
 	errPrefix string
 }
 
-// Panic print the args and close the program.
+// Panic print the args and panics the program.
 // Used for fatal errors that must interrupt the
 // compiler.
-func (bfLog *BfErrLogger) Panic(args ...any) {
-	bfLog.log.Fatalln(bfLog.mountArgs(args)...)
+func (bfLog *BfErrLogger) Panicln(args ...any) {
+	bfLog.log.Panicln(bfLog.mountArgs(args)...)
 }
 
 // Log print the args and continue the program.
 // Used for errors that doesn't affect the compilation
 // or to accumulate errors before crash.
-func (bfLog *BfErrLogger) Log(args ...any) {
+func (bfLog *BfErrLogger) Println(args ...any) {
 	bfLog.log.Println(bfLog.mountArgs(args)...)
+}
+
+// Panic print the args and quits the program.
+// Used for fatal errors that must interrupt the
+// compiler.
+func (bfLog *BfErrLogger) Fatalln(args ...any) {
+	bfLog.log.Fatalln(bfLog.mountArgs(args)...)
 }
 
 // NewBfErrLogger builds and return a new BfErrLogger pointer.

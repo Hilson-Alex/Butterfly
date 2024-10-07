@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -12,9 +11,8 @@ import (
 	"syscall"
 
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
+	errcall "github.com/Hilson-Alex/calldef/src/err_call"
 )
-
-type callback func(file *os.File)
 
 const (
 	tokenFile          = "doc/Tokens.md"
@@ -37,7 +35,7 @@ func ReadCompileDir() (entries []os.DirEntry, err error) {
 		return
 	}
 	if errors.Is(err, syscall.ENOTDIR) {
-		var errMsg = "could not open the specified path as an folder. Are you sure it is a directory?"
+		var errMsg = "could not open the specified path as an folder. Are you sure it is a valid directory?"
 		err = bfErrors.CreateNestedErr(errMsg, err)
 		return
 	}
@@ -60,14 +58,10 @@ func PrintTokenList() error {
 	return err
 }
 
-func HandleFile(name string, handler callback) {
+func HandleFile(name string, handler func(file *os.File)) {
 	file, _ := os.Open(name)
-	defer QuietClose(file)
+	defer errcall.Run(file.Close).OrIgnore()
 	handler(file)
-}
-
-func QuietClose(file fs.File) {
-	_ = file.Close()
 }
 
 func ResourceFolder() (string, error) {
@@ -86,10 +80,10 @@ func GenerateGoFile(filename, content string) error {
 	}
 	var tempFile = filepath.Join(resourceFolder, generatedFolder, filename+".go")
 	if _, err = os.Stat(tempFile); err == nil {
-		return errors.New("Module" + filename + "declared multiple times")
+		return errors.New("Module " + filename + " declared multiple times")
 	}
 	generated, err := os.Create(tempFile)
-	defer QuietClose(generated)
+	defer errcall.Run(generated.Close).OrIgnore()
 	if err != nil {
 		return err
 	}
