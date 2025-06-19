@@ -1,2 +1,10 @@
 github.com/Hilson-Alex/calldef v1.0.0 h1:fCwuJ2cd6u6DyoACr2m7AvLQqEY/ZhdT5HbFNUdFdIE=
 github.com/Hilson-Alex/calldef v1.0.0/go.mod h1:GpnnUefTxFfI/0FQisP2s67TLXHd9TCPcflZjUBvPZk=
+github.com/Hilson-Alex/goembed v1.0.0 h1:LbivrCcSBYGkp1NBjRwgrEmNFvMf1UxJjruT+/keM2g=
+github.com/Hilson-Alex/goembed v1.0.0/go.mod h1:Rappp8MB+wmxVojL255H1BiwUAPM8FgomCgbl2R4HU0=
+github.com/Hilson-Alex/goembed v1.0.1 h1:jICiqjwsmSKeWyU9M6Bwn6YSfbTjLvR5zknjXpZBlK8=
+github.com/Hilson-Alex/goembed v1.0.1/go.mod h1:Rappp8MB+wmxVojL255H1BiwUAPM8FgomCgbl2R4HU0=
+github.com/Hilson-Alex/goembed v1.0.2 h1:uDOeJoiyUvIAfB5N0OT3re0GNt0cwKaVNeavscAxPQ4=
+github.com/Hilson-Alex/goembed v1.0.2/go.mod h1:Rappp8MB+wmxVojL255H1BiwUAPM8FgomCgbl2R4HU0=
+github.com/Hilson-Alex/goembed v1.0.3 h1:SuhldZKDeC+5fgjcNEIf7oGnS18pkbT9TyZd0dbtwr0=
+github.com/Hilson-Alex/goembed v1.0.3/go.mod h1:Rappp8MB+wmxVojL255H1BiwUAPM8FgomCgbl2R4HU0=

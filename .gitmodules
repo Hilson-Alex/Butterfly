@@ -2,6 +2,3 @@
 [submodule "out/resources/butterfly_embed"]
 	path = out/resources/butterfly_embed
 	url = https://github.com/Hilson-Alex/butterfly_embed.git
-[submodule "out/resources/go_compiler"]
-	path = out/resources/go_compiler
-	url = https://github.com/Hilson-Alex/go_compiler.git

@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"syscall"
 
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
 	errcall "github.com/Hilson-Alex/calldef/src/err_call"
+	"github.com/Hilson-Alex/goembed/compiler"
+	"github.com/Hilson-Alex/goembed/props"
 )
 
 const (
@@ -96,12 +97,18 @@ func GoCompile() error {
 	if err != nil {
 		return err
 	}
-	var goPath = filepath.Join(resourceFolder, goInternalCompiler)
-	var env, args = compilerSetup(resourceFolder)
-	return executeExternalEnv(
-		env,
-		goPath,
-		args...,
+	compiler.CacheRoot = resourceFolder
+	return compiler.GoBuild(
+		butterflyEmbed,
+		compiler.BuildOptions(
+			compiler.WithArgs(
+				props.From(map[string]string{
+					"-C":    filepath.Join(resourceFolder, butterflyEmbed),
+					"-o":    outputPath(),
+					"-tags": RuntimeMode,
+				}),
+			),
+		),
 	)
 }
 
@@ -111,8 +118,17 @@ func GoFmtGenerated() error {
 		return err
 	}
 	var generated = filepath.Join(resourceFolder, generatedFolder)
-	var goFmt = filepath.Join(resourceFolder, goFmtInternal)
-	return executeExternal(goFmt, "-s", "-w", generated)
+	return compiler.GoFmt(
+		generated,
+		compiler.BuildOptions(
+			compiler.WithArgs(
+				props.From(map[string]string{
+					"-s": "",
+					"-w": "",
+				}),
+			),
+		),
+	)
 }
 
 func CleanGeneratedFiles() {
@@ -123,33 +139,6 @@ func CleanGeneratedFiles() {
 			_ = os.Remove(filepath.Join(resourceFolder, generatedFolder, file.Name()))
 		}
 	}
-}
-
-func compilerSetup(baseFolder string) (env, args []string) {
-	env = append(
-		os.Environ(),
-		"GOROOT="+filepath.Join(baseFolder, goRoot),
-	)
-	args = []string{
-		"build",
-		"-C=" + filepath.Join(baseFolder, butterflyEmbed),
-		"-o=" + outputPath(),
-		"-tags=" + RuntimeMode,
-		butterflyEmbed,
-	}
-	return
-}
-
-func executeExternal(path string, arg ...string) error {
-	return executeExternalEnv(os.Environ(), path, arg...)
-}
-
-func executeExternalEnv(env []string, path string, arg ...string) error {
-	cmd := exec.Command(path, arg...)
-	cmd.Env = env
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
 }
 
 func filterEntries(entries []os.DirEntry) []os.DirEntry {
@@ -173,5 +162,7 @@ func outputPath() string {
 	if filepath.Ext(absPath) != ".exe" {
 		return filepath.Join(absPath, exeName)
 	}
-	return absPath
+	exeName = filepath.Base(absPath)
+	absPath, _ = filepath.Abs(filepath.Dir(absPath))
+	return filepath.Join(absPath, exeName)
 }

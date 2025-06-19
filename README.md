@@ -82,7 +82,7 @@ Next, open the project folder and run
 
 ```shell
 go generate ./src
-go build -o ../out/butterfly.exe github.com/Hilson-Alex/Butterfly/src
+go build -o ./out/butterfly.exe github.com/Hilson-Alex/Butterfly/src
 ```
 
 And then you will have a `butterfly.exe` on the `out` folder, beside the src.
