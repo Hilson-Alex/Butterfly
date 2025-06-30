@@ -22,10 +22,6 @@ type lexerList = [][]*lexer.Token
 type parserList = []parser.ParserResult
 
 func main() {
-	if bfio.ListTokens {
-		errcall.Run(bfio.PrintTokenList).OrPanicOn(generalLogger)
-		return
-	}
 	var entries = errcall.Supply(bfio.ReadCompileDir).OrPanicOn(generalLogger)
 	compileAll(entries)
 }
@@ -92,24 +88,25 @@ func parseAll(lexerResults lexerList) ([]parser.ParserResult, error) {
 
 func generateAll(parserResults []parser.ParserResult) error {
 	var failedFiles = make([]error, 0, len(parserResults))
-	bfio.CleanGeneratedFiles()
+	bfRuntime, err := bfio.BuildRuntime()
+	if err != nil {
+		return err
+	}
 	for _, result := range parserResults {
-		errcall.
-			Run(func() error { return bfio.GenerateGoFile(result.ModuleName, result.Result) }).
-			OrHandle(func(err error) { failedFiles = append(failedFiles, err) })
+		if err := bfRuntime.AddTargetCode(result.ModuleName, result.Result); err != nil {
+			failedFiles = append(failedFiles, err)
+		}
 	}
 
 	if len(failedFiles) > 0 {
 		return bfErrors.CreateNestedErr("error generating files", failedFiles...)
 	}
 
-	if err := bfio.GoCompile(); err != nil {
+	if err := bfio.GoCompile(bfRuntime); err != nil {
 		return bfErrors.CreateNestedErr("error generating executable", err)
 	}
 	if !bfio.KeepGenFiles {
-		bfio.CleanGeneratedFiles()
-		return nil
+		return bfRuntime.Clear()
 	}
-	errcall.Run(bfio.GoFmtGenerated).OrLogOn(generalLogger)
-	return nil
+	return bfio.GoFmtGenerated(bfRuntime)
 }

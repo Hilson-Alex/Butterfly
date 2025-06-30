@@ -1,29 +1,18 @@
 package bfio
 
 import (
-	"bufio"
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"syscall"
 
 	bfErrors "github.com/Hilson-Alex/Butterfly/src/errors"
-	errcall "github.com/Hilson-Alex/calldef/src/err_call"
+	bfEmbed "github.com/Hilson-Alex/butterfly_embed"
 	"github.com/Hilson-Alex/goembed/compiler"
 	"github.com/Hilson-Alex/goembed/props"
 )
 
-const (
-	tokenFile          = "doc/Tokens.md"
-	goRoot             = "go_compiler"
-	goInternalCompiler = "go_compiler/bin/go.exe"
-	goFmtInternal      = "go_compiler/bin/gofmt.exe"
-	butterflyEmbed     = "butterfly_embed"
-	generatedFolder    = "butterfly_embed/generated_code/"
-	generatedDocFile   = "bf_____generated.go"
-)
+const tokenFile = "doc/Tokens.md"
 
 func ReadCompileDir() (entries []os.DirEntry, err error) {
 	if CompileDir == "" {
@@ -44,24 +33,9 @@ func ReadCompileDir() (entries []os.DirEntry, err error) {
 	return
 }
 
-func PrintTokenList() error {
-	var resourceFolder, err = ResourceFolder()
-	if err != nil {
-		return err
-	}
-	HandleFile(filepath.Join(resourceFolder, tokenFile), func(file *os.File) {
-		var scanner = bufio.NewScanner(file)
-		for scanner.Scan() {
-			fmt.Println(strings.ReplaceAll(scanner.Text(), "**", ""))
-		}
-		err = scanner.Err()
-	})
-	return err
-}
-
 func HandleFile(name string, handler func(file *os.File)) {
 	file, _ := os.Open(name)
-	defer errcall.Run(file.Close).OrIgnore()
+	defer func() { _ = file.Close() }()
 	handler(file)
 }
 
@@ -74,36 +48,26 @@ func ResourceFolder() (string, error) {
 	return filepath.Join(exePath, "resources"), nil
 }
 
-func GenerateGoFile(filename, content string) error {
+func BuildRuntime() (*bfEmbed.BFRuntime, error) {
 	var resourceFolder, err = ResourceFolder()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	var tempFile = filepath.Join(resourceFolder, generatedFolder, filename+".go")
-	if _, err = os.Stat(tempFile); err == nil {
-		return errors.New("Module " + filename + " declared multiple times")
-	}
-	generated, err := os.Create(tempFile)
-	defer errcall.Run(generated.Close).OrIgnore()
-	if err != nil {
-		return err
-	}
-	_, err = generated.WriteString(content)
-	return err
+	return bfEmbed.CreateRuntime(resourceFolder)
 }
 
-func GoCompile() error {
+func GoCompile(bfRuntime *bfEmbed.BFRuntime) error {
 	var resourceFolder, err = ResourceFolder()
 	if err != nil {
 		return err
 	}
 	compiler.CacheRoot = resourceFolder
 	return compiler.GoBuild(
-		butterflyEmbed,
+		bfRuntime.GoModule(),
 		compiler.BuildOptions(
 			compiler.WithArgs(
 				props.From(map[string]string{
-					"-C":    filepath.Join(resourceFolder, butterflyEmbed),
+					"-C":    bfRuntime.CompileDir(),
 					"-o":    outputPath(),
 					"-tags": RuntimeMode,
 				}),
@@ -112,14 +76,9 @@ func GoCompile() error {
 	)
 }
 
-func GoFmtGenerated() error {
-	var resourceFolder, err = ResourceFolder()
-	if err != nil {
-		return err
-	}
-	var generated = filepath.Join(resourceFolder, generatedFolder)
+func GoFmtGenerated(bfRuntime *bfEmbed.BFRuntime) error {
 	return compiler.GoFmt(
-		generated,
+		bfRuntime.GenerateDir(),
 		compiler.BuildOptions(
 			compiler.WithArgs(
 				props.From(map[string]string{
@@ -129,16 +88,6 @@ func GoFmtGenerated() error {
 			),
 		),
 	)
-}
-
-func CleanGeneratedFiles() {
-	var resourceFolder, _ = ResourceFolder()
-	var entries, _ = os.ReadDir(filepath.Join(resourceFolder, generatedFolder))
-	for _, file := range entries {
-		if file.Name() != generatedDocFile {
-			_ = os.Remove(filepath.Join(resourceFolder, generatedFolder, file.Name()))
-		}
-	}
 }
 
 func filterEntries(entries []os.DirEntry) []os.DirEntry {
